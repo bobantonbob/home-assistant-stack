@@ -235,18 +235,18 @@ Planned next dashboards:
 
 ---
 
-# 📥 Import Dashboard
+# 📸 Dashboard Preview
 
-Open Home Assistant dashboard.
+![Server Monitor](server_monitor_1.png)
 
-Add card manually.
+---
 
-Paste contents from:
+# 📥 Download YAML
 
-```text
-server_monitor_1.yaml
-```
+Open:
 
-Save dashboard.
+[server_monitor_1.yaml](server_monitor_1.yaml)
+
+Copy YAML code and paste it into Home Assistant Manual Card.
 
 Done ✅
