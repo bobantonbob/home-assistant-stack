@@ -1,1 +1,114 @@
+type: vertical-stack
+cards:
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: custom:mushroom-template-card
+        primary: Internet
+        secondary: |
+          {% if is_state('binary_sensor.8_8_8_8', 'on') %}
+            ONLINE
+          {% else %}
+            OFFLINE
+          {% endif %}
+        icon: mdi:web
+        icon_color: |
+          {% if is_state('binary_sensor.8_8_8_8', 'on') %}
+            green
+          {% else %}
+            red
+          {% endif %}
 
+      - type: custom:mushroom-template-card
+        primary: Network IN
+        secondary: "{{ states('sensor.system_monitor_network_throughput_in_eno1') }} MB/s"
+        icon: mdi:download-network
+        icon_color: cyan
+
+      - type: custom:mushroom-template-card
+        primary: Network OUT
+        secondary: "{{ states('sensor.system_monitor_network_throughput_out_eno1') }} MB/s"
+        icon: mdi:upload-network
+        icon_color: purple
+
+      - type: custom:mushroom-template-card
+        primary: RAM Free
+        secondary: "{{ states('sensor.system_monitor_memory_free') }} MiB"
+        icon: mdi:memory
+        icon_color: blue
+
+      - type: custom:mushroom-template-card
+        primary: Disk Use
+        secondary: "{{ states('sensor.system_monitor_disk_use') }} GiB"
+        icon: mdi:harddisk
+        icon_color: green
+
+      - type: custom:mushroom-template-card
+        primary: Disk Free
+        secondary: "{{ states('sensor.system_monitor_disk_free') }} GiB"
+        icon: mdi:harddisk-plus
+        icon_color: green
+
+      - type: custom:mushroom-template-card
+        primary: CPU Temp
+        secondary: "{{ states('sensor.system_monitor_processor_temperature') }} °C"
+        icon: mdi:thermometer
+        icon_color: red
+
+      - type: custom:mushroom-template-card
+        primary: CPU Usage
+        secondary: "{{ states('sensor.system_monitor_processor_use') }} %"
+        icon: mdi:cpu-64-bit
+        icon_color: orange
+
+      - type: custom:mushroom-template-card
+        primary: Load 1m
+        secondary: "{{ states('sensor.system_monitor_load_1_min') }}"
+        icon: mdi:speedometer
+        icon_color: teal
+
+  - type: custom:mini-graph-card
+    name: CPU Usage
+    entities:
+      - sensor.system_monitor_processor_use
+    hours_to_show: 24
+    points_per_hour: 2
+    line_width: 3
+    animate: true
+    show:
+      fill: true
+
+  - type: custom:mini-graph-card
+    name: Network Traffic
+    entities:
+      - sensor.system_monitor_network_throughput_in_eno1
+      - sensor.system_monitor_network_throughput_out_eno1
+    hours_to_show: 24
+    points_per_hour: 2
+    line_width: 3
+    animate: true
+
+  - type: entities
+    title: Server Info
+    entities:
+      - entity: sensor.system_monitor_ipv4_address_eno1
+        name: System Monitor IPv4 address eno1
+
+      - entity: sensor.system_monitor_last_boot
+        name: System Monitor Last boot
+
+      - entity: sensor.system_monitor_load_1_min
+        name: System Monitor Load (1 min)
+
+      - entity: sensor.system_monitor_load_5_min
+        name: System Monitor Load (5 min)
+
+      - entity: sensor.system_monitor_load_15_min
+        name: System Monitor Load (15 min)
+
+      - entity: binary_sensor.8_8_8_8
+        name: Google Ping
+
+      - entity: sensor.uptime
+        name: Uptime
