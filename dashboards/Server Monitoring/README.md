@@ -222,16 +222,11 @@ home-assistant-server-monitor/
 
 ---
 
-# 📺 Future Dashboard Parts
+# 📺 YouTube Video
 
-Planned next dashboards:
+Watch full setup tutorial on YouTube:
 
-- 🐳 Docker Monitoring
-- 📹 Frigate AI Dashboard
-- 🤖 Telegram Alerts
-- 🚗 Tesla Dashboard
-- ☀️ Solar / Deye Dashboard
-- ⚡ Intel GPU Monitoring
+👉 VIDEO LINK HERE
 
 ---
 
