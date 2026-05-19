@@ -234,3 +234,19 @@ Planned next dashboards:
 - ⚡ Intel GPU Monitoring
 
 ---
+
+# 📥 Import Dashboard
+
+Open Home Assistant dashboard.
+
+Add card manually.
+
+Paste contents from:
+
+```text
+server_monitor_1.yaml
+```
+
+Save dashboard.
+
+Done ✅
