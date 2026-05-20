@@ -253,10 +253,3 @@ Click the Forecast option button and select the Solcast Solar option.. Click SAV
 [^1]: API usage information is directly read from Solcast
 [^2]: Each rooftop created in Solcast will be listed separately
 
-<summary><h3>Credits</summary></h3>
-
-Modified from the great works of
-* @rany2 - ranygh@riseup.net
-* dannerph/homeassistant-solcast
-* cjtapper/solcast-py
-* home-assistant-libs/forecast_solar
