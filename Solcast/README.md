@@ -1,3 +1,7 @@
+⚡ Real-world Home Assistant energy automations based on my own solar station, Deye inverters, microinverters, Solcast forecasts and smart energy balancing.
+
+Built from real experiments, real dashboards and real Home Assistant workflows.
+
 # Home Assistant + Solcast + Deye Energy Automation
 
 Home Assistant(https://www.home-assistant.io) Integration Component
@@ -242,3 +246,9 @@ Click the Forecast option button and select the Solcast Solar option.. Click SAV
 | `Hard Limit Set` |  | N |  | `False` is not set, else set integer value in `watts`. Can only be set or removed by service ([services](#services))|
 | `Rooftop(s) name` | number | Y | `kWh` | Total forecast for rooftop today (attributes contain the solcast rooftop setup)[^2] |
 
+Author
+
+Anton Babenko
+
+YouTube: [UCVjJmW4CYkmd-RE0IeXo9tQ](https://www.youtube.com/channel/UCVjJmW4CYkmd-RE0IeXo9tQ)
+GitHub: [YOUR_GITHUB_LINK](https://github.com/bobantonbob)
