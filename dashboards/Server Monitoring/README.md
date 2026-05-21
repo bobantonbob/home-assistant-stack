@@ -227,7 +227,7 @@ home-assistant-server-monitor/
 Watch full setup tutorial on YouTube:
 
 👉 VIDEO LINK HERE
-
+https://youtu.be/FDWTgakrlqY
 ---
 
 # 📸 Dashboard Preview
