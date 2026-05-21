@@ -53,73 +53,64 @@ Upload:
 
 ```text
 3D Apartment Dashboard.png
+```
 
 to:
 
+```text
 /config/www/
+```
 
 Then image will be available as:
 
+```text
 /local/3D Apartment Dashboard.png
-2. Copy YAML
+```
 
-Copy content from:
+---
 
+## 2. Add apartment dashboard
+
+Copy YAML from:
+
+```text
 apartment.yaml
+```
 
-into your dashboard.
+This is the main 3D apartment picture-elements card.
 
-3. Change entities
+---
 
-Replace entities with your own:
+## 3. Add control panel
+
+Copy YAML from:
+
+```text
+panel.yaml
+```
+
+This is the right-side control panel with:
+- dimmers
+- sliders
+- switches
+- temperatures
+- power monitoring
+- controls
+
+---
+
+## 4. Change entities
+
+Replace entities with your own.
 
 Example:
 
+```yaml
 light.dimmer_kukhnia
 sensor.kompiuter_power
 climate.floor_heating
 input_number.lamps_eva_brightness
-
-Your entities WILL be different.
-
-Google Assistant SDK
-
-This dashboard also supports controlling Google Home devices directly from Home Assistant WITHOUT saying:
-
-"OK Google"
-
-Used service:
-
-google_assistant_sdk.send_text_command
-
-Example:
-
-turn on Lamps Eva
-AI Workflow
-
-Rooms were generated using:
-
-ChatGPT
-AI top-view rendering
-BTI apartment plan
-Manual room photo references
-Notes
-
-This dashboard is fully customizable.
-
-You can add:
-
-lights
-dimmers
-sockets
-sensors
-cameras
-automations
-Tesla
-energy monitoring
-Telegram automations
-AI controls
-YouTube
+```
 
 Tutorial video:
 (Add your YouTube link here)
