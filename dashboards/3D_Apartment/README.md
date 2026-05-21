@@ -25,8 +25,9 @@ AI-generated 3D apartment dashboard for Home Assistant with Google Assistant SDK
 
 | File | Description |
 |------|-------------|
-| `apartment.yaml` | Main dashboard YAML |
-| `3D Apartment Dashboard.png` | Dashboard background image |
+| `apartment.yaml` | 3D apartment picture-elements dashboard |
+| `panel.yaml` | Right-side control panel dashboard |
+| `3D Apartment Dashboard.png` | Main apartment image |
 | `clipboard_image_*.png` | Additional preview/screenshot |
 
 ---
