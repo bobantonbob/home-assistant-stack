@@ -2,7 +2,7 @@
 
 AI-generated 3D apartment dashboard for Home Assistant with Google Assistant SDK integration, YAML configuration, dimmers, sensors and interactive controls.
 
-![Preview](./3D%20Apartment%20Dashboard.png)
+![Preview](./3D_Apartment_Dashboard.png)
 
 ---
 
