@@ -113,7 +113,7 @@ input_number.lamps_eva_brightness
 ```
 
 Tutorial video:
-(Add your YouTube link here)
+([Add your YouTube link here](https://youtu.be/IA9cHZjQhpw))
 
 Author
 
