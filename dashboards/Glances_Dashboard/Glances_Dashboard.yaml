@@ -1,1 +1,239 @@
 
+type: sections
+max_columns: 4
+title: Server Monitor
+path: test
+sections:
+  - type: grid
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: "## 🟢 LIVE SERVER"
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Internet
+                secondary: |
+                  {% if is_state('binary_sensor.8_8_8_8', 'on') %}
+                    ONLINE
+                  {% else %}
+                    OFFLINE
+                  {% endif %}
+                icon: mdi:web
+                icon_color: |
+                  {% if is_state('binary_sensor.8_8_8_8', 'on') %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
+              - type: custom:mushroom-template-card
+                primary: CPU
+                secondary: "{{ states('sensor.system_monitor_processor_use') }} %"
+                icon: mdi:cpu-64-bit
+                icon_color: orange
+              - type: custom:mushroom-template-card
+                primary: Temp
+                secondary: "{{ states('sensor.system_monitor_processor_temperature') }} °C"
+                icon: mdi:thermometer
+                icon_color: red
+              - type: custom:mushroom-template-card
+                primary: RAM Free
+                secondary: "{{ states('sensor.system_monitor_memory_free') }} MiB"
+                icon: mdi:memory
+                icon_color: blue
+              - type: custom:mushroom-template-card
+                primary: Disk Used
+                secondary: "{{ states('sensor.system_monitor_disk_use') }} GiB"
+                icon: mdi:harddisk
+                icon_color: green
+              - type: custom:mushroom-template-card
+                primary: Disk Free
+                secondary: "{{ states('sensor.system_monitor_disk_free') }} GiB"
+                icon: mdi:harddisk-plus
+                icon_color: green
+              - type: custom:mushroom-template-card
+                primary: Network IN
+                secondary: >-
+                  {{ states('sensor.system_monitor_network_throughput_in_eno1')
+                  }} MB/s
+                icon: mdi:download-network
+                icon_color: cyan
+              - type: custom:mushroom-template-card
+                primary: Network OUT
+                secondary: >-
+                  {{ states('sensor.system_monitor_network_throughput_out_eno1')
+                  }} MB/s
+                icon: mdi:upload-network
+                icon_color: purple
+              - type: custom:mushroom-template-card
+                primary: Load 1m
+                secondary: "{{ states('sensor.system_monitor_load_1_min') }}"
+                icon: mdi:speedometer
+                icon_color: teal
+          - type: custom:mini-graph-card
+            name: CPU Usage
+            entities:
+              - sensor.system_monitor_processor_use
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 3
+            animate: true
+            show:
+              fill: true
+          - type: custom:mini-graph-card
+            name: Network Traffic
+            entities:
+              - sensor.system_monitor_network_throughput_in_eno1
+              - sensor.system_monitor_network_throughput_out_eno1
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 3
+            animate: true
+          - type: entities
+            title: Server Info
+            entities:
+              - sensor.system_monitor_ipv4_address_eno1
+              - sensor.system_monitor_last_boot
+              - sensor.uptime
+              - binary_sensor.8_8_8_8
+  - type: grid
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: "## 🌡️ HARDWARE"
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: gauge
+                name: Core 0
+                entity: sensor.glances_core_0_temperature
+                min: 0
+                max: 100
+                severity:
+                  green: 0
+                  yellow: 65
+                  red: 80
+              - type: gauge
+                name: Core 1
+                entity: sensor.glances_core_1_temperature
+                min: 0
+                max: 100
+                severity:
+                  green: 0
+                  yellow: 65
+                  red: 80
+              - type: gauge
+                name: CPU Package
+                entity: sensor.glances_package_id_0_temperature
+                min: 0
+                max: 100
+                severity:
+                  green: 0
+                  yellow: 65
+                  red: 80
+          - type: custom:mini-graph-card
+            name: CPU Temperatures
+            entities:
+              - sensor.glances_core_0_temperature
+              - sensor.glances_core_1_temperature
+              - sensor.glances_package_id_0_temperature
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 3
+            animate: true
+            show:
+              fill: true
+          - type: custom:mini-graph-card
+            name: CPU Load Average
+            entities:
+              - sensor.system_monitor_load_1_min
+              - sensor.system_monitor_load_5_min
+              - sensor.system_monitor_load_15_min
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 3
+            animate: true
+          - type: custom:mini-graph-card
+            name: Disk IO
+            entities:
+              - sensor.glances_sda_disk_read
+              - sensor.glances_sda_disk_write
+            hours_to_show: 24
+            points_per_hour: 2
+            line_width: 3
+            animate: true
+  - type: grid
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: "## 🐳 DOCKER / GPU / MEMORY"
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: gauge
+                name: Containers CPU
+                entity: sensor.glances_containers_cpu_usage
+                min: 0
+                max: 100
+                severity:
+                  green: 0
+                  yellow: 50
+                  red: 80
+              - type: gauge
+                name: Containers RAM
+                entity: sensor.glances_containers_memory_used
+                min: 0
+                max: 8000
+                severity:
+                  green: 0
+                  yellow: 4000
+                  red: 7000
+              - type: gauge
+                name: Containers Active
+                entity: sensor.glances_containers_active
+                min: 0
+                max: 20
+                severity:
+                  green: 0
+                  yellow: 10
+                  red: 15
+          - type: gauge
+            name: Intel GPU
+            entity: sensor.glances_intel_gpu_gpu_intel0_processor_usage
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 50
+              red: 80
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: gauge
+                name: Memory Usage
+                entity: sensor.glances_memory_usage
+                min: 0
+                max: 100
+                severity:
+                  green: 0
+                  yellow: 60
+                  red: 85
+              - type: gauge
+                name: Swap Usage
+                entity: sensor.glances_swap_usage
+                min: 0
+                max: 100
+                severity:
+                  green: 0
+                  yellow: 30
+                  red: 60
+icon: mdi:server
+cards: []
