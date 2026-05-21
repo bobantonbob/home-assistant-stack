@@ -1,1 +1,32 @@
-
+type: grid
+cards:
+  - type: entities
+    title: Керування будинком
+    show_header_toggle: false
+    entities:
+      - entity: input_boolean.lamps_eva_virtual
+        name: Lamps Eva ON/OFF
+      - type: custom:mushroom-number-card
+        entity: input_number.lamps_eva_brightness
+        name: Яскравість Eva
+        icon: mdi:lightbulb
+        display_mode: slider
+        fill_container: true
+      - entity: light.dimmer_kukhnia
+        name: LED кухня ON/OFF
+      - type: custom:mushroom-light-card
+        entity: light.dimmer_kukhnia
+        name: Яскравість кухні
+        show_brightness_control: true
+        show_color_temp_control: false
+        collapsible_controls: false
+        layout: vertical
+      - entity: climate.floor_heating
+        name: Тепла підлога
+      - type: divider
+      - entity: sensor.kompiuter_power
+        name: Компʼютер
+      - entity: sensor.boiler_power
+        name: Бойлер
+      - entity: sensor.kholodilnik_power
+        name: Холодильник
