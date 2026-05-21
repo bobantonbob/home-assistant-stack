@@ -1,32 +1,86 @@
-type: grid
-cards:
-  - type: entities
-    title: Керування будинком
-    show_header_toggle: false
-    entities:
-      - entity: input_boolean.lamps_eva_virtual
-        name: Lamps Eva ON/OFF
-      - type: custom:mushroom-number-card
-        entity: input_number.lamps_eva_brightness
-        name: Яскравість Eva
-        icon: mdi:lightbulb
-        display_mode: slider
-        fill_container: true
-      - entity: light.dimmer_kukhnia
-        name: LED кухня ON/OFF
-      - type: custom:mushroom-light-card
-        entity: light.dimmer_kukhnia
-        name: Яскравість кухні
-        show_brightness_control: true
-        show_color_temp_control: false
-        collapsible_controls: false
-        layout: vertical
-      - entity: climate.floor_heating
-        name: Тепла підлога
-      - type: divider
-      - entity: sensor.kompiuter_power
-        name: Компʼютер
-      - entity: sensor.boiler_power
-        name: Бойлер
-      - entity: sensor.kholodilnik_power
-        name: Холодильник
+type: entities
+title: Керування будинком
+show_header_toggle: false
+entities:
+  - type: custom:mushroom-template-card
+    entity: input_boolean.lamps_eva_virtual
+    primary: Lamps Eva ON/OFF
+    icon: |
+      {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+        mdi:lightbulb
+      {% else %}
+        mdi:lightbulb-off
+      {% endif %}
+    icon_color: |
+      {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+        blue
+      {% else %}
+        grey
+      {% endif %}
+    tap_action:
+      action: toggle
+    layout: horizontal
+  - type: custom:mushroom-number-card
+    entity: input_number.lamps_eva_brightness
+    name: Яскравість Eva
+    icon: mdi:lightbulb
+    display_mode: slider
+    fill_container: true
+    layout: vertical
+    tap_action:
+      action: call-service
+      service: input_boolean.toggle
+      target:
+        entity_id: input_boolean.lamps_eva_virtual
+    card_mod:
+      style: |
+        ha-card {
+          opacity: {% if is_state('input_boolean.lamps_eva_virtual', 'off') %} 0.45 {% else %} 1 {% endif %};
+          filter: {% if is_state('input_boolean.lamps_eva_virtual', 'off') %} grayscale(100%) {% else %} none {% endif %};
+        }
+  - type: custom:mushroom-template-card
+    entity: light.dimmer_kukhnia
+    primary: LED кухня ON/OFF
+    icon: |
+      {% if is_state('light.dimmer_kukhnia', 'on') %}
+        mdi:lightbulb
+      {% else %}
+        mdi:lightbulb-off
+      {% endif %}
+    icon_color: |
+      {% if is_state('light.dimmer_kukhnia', 'on') %}
+        amber
+      {% else %}
+        grey
+      {% endif %}
+    tap_action:
+      action: toggle
+    layout: horizontal
+  - type: custom:mushroom-light-card
+    entity: light.dimmer_kukhnia
+    name: Яскравість кухні
+    show_brightness_control: true
+    show_color_temp_control: false
+    collapsible_controls: false
+    layout: vertical
+  - entity: climate.floor_heating
+    name: Тепла підлога ON/OFF
+    tap_action:
+      action: toggle
+  - type: custom:mushroom-climate-card
+    entity: climate.floor_heating
+    name: Температура підлоги
+    icon: mdi:thermometer
+    show_temperature_control: true
+    collapsible_controls: false
+    hvac_modes:
+      - heat
+      - "off"
+    layout: vertical
+  - type: divider
+  - entity: sensor.kompiuter_power
+    name: Компʼютер
+  - entity: sensor.boiler_power
+    name: Бойлер
+  - entity: sensor.kholodilnik_power
+    name: Холодильник
