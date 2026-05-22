@@ -2,7 +2,7 @@
 
 AI-generated 3D apartment dashboard for Home Assistant with Google Assistant SDK integration, YAML configuration, dimmers, sensors and interactive controls.
 
-![Preview](./3D_Apartment_Dashboard.png)
+![Preview](./Apartment_Dashboard.png)
 
 ---
 
@@ -29,6 +29,7 @@ AI-generated 3D apartment dashboard for Home Assistant with Google Assistant SDK
 | `panel.yaml` | Right-side control panel dashboard |
 | `3D Apartment Dashboard.png` | Main apartment image |
 | `clipboard_image_*.png` | Additional preview/screenshot |
+| `HA_home11.png` | Then image will be config/www |
 
 ---
 
@@ -112,8 +113,6 @@ climate.floor_heating
 input_number.lamps_eva_brightness
 ```
 
-Tutorial video:
-([Add your YouTube link here](https://youtu.be/IA9cHZjQhpw))
 
 Author
 
