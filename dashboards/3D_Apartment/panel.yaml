@@ -127,3 +127,5 @@ entities:
     name: Бойлер
   - entity: sensor.kholodilnik_power
     name: Холодильник
+  - entity: sensor.smart_plug_power
+    name: Мікрохвильовка
