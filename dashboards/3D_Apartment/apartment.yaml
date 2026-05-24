@@ -1,610 +1,832 @@
-type: picture-elements
-image: /local/HA_home11_1.png
-aspect_ratio: 1/1
-elements:
-  - type: custom:button-card
-    entity: sensor.kholodilnik_power
-    icon: mdi:fridge-outline
-    show_name: false
-    show_state: true
-    state_display: |
-      [[[
-        return Math.round(Number(entity.state)) + ' W';
-      ]]]
-    styles:
-      card:
-        - background: rgba(0,0,0,0.60)
-        - border-radius: clamp(9px, 1.5vw, 14px)
-        - padding: clamp(2px, 0.8vw, 4px)
-        - width: clamp(42px, 5.5vw, 58px)
-        - height: clamp(46px, 6vw, 62px)
-        - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
-      grid:
-        - grid-template-areas: |
-            "i"
-            "s"
-        - grid-template-columns: 1fr
-        - grid-template-rows: auto auto
-      icon:
-        - color: cyan
-        - width: clamp(14px, 2vw, 18px)
-        - justify-self: center
-      state:
-        - color: cyan
-        - font-size: clamp(8px, 1.6vw, 11px)
-        - font-weight: bold
-        - justify-self: center
-    style:
-      top: 74%
-      left: 92%
-  - type: custom:button-card
-    entity: sensor.boiler_power
-    icon: mdi:water-boiler
-    show_name: false
-    show_state: true
-    state_display: |
-      [[[
-        return Math.round(Number(entity.state)) + ' W';
-      ]]]
-    styles:
-      card:
-        - background: rgba(0,0,0,0.60)
-        - border-radius: clamp(9px, 1.5vw, 14px)
-        - padding: clamp(2px, 0.8vw, 4px)
-        - width: clamp(42px, 5.5vw, 58px)
-        - height: clamp(46px, 6vw, 62px)
-        - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
-      grid:
-        - grid-template-areas: |
-            "i"
-            "s"
-        - grid-template-columns: 1fr
-        - grid-template-rows: auto auto
-      icon:
-        - color: cyan
-        - width: clamp(14px, 2vw, 18px)
-        - justify-self: center
-      state:
-        - color: cyan
-        - font-size: clamp(8px, 1.6vw, 11px)
-        - font-weight: bold
-        - justify-self: center
-    style:
-      top: 8%
-      left: 60%
-  - type: custom:button-card
-    entity: sensor.kompiuter_power
-    icon: mdi:desktop-tower-monitor
-    show_name: false
-    show_state: true
-    state_display: |
-      [[[
-        return Math.round(Number(entity.state)) + ' W';
-      ]]]
-    styles:
-      card:
-        - background: rgba(0,0,0,0.60)
-        - border-radius: clamp(9px, 1.5vw, 14px)
-        - padding: clamp(2px, 0.8vw, 4px)
-        - width: clamp(42px, 5.5vw, 58px)
-        - height: clamp(46px, 6vw, 62px)
-        - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
-      grid:
-        - grid-template-areas: |
-            "i"
-            "s"
-        - grid-template-columns: 1fr
-        - grid-template-rows: auto auto
-      icon:
-        - color: cyan
-        - width: clamp(14px, 2vw, 18px)
-        - justify-self: center
-      state:
-        - color: cyan
-        - font-size: clamp(8px, 1.6vw, 11px)
-        - font-weight: bold
-        - justify-self: center
-    style:
-      top: 87%
-      left: 40%
-  - type: custom:button-card
-    entity: sensor.ups_power
-    icon: mdi:transmission-tower
-    show_name: false
-    show_state: true
-    tap_action:
-      action: more-info
-    state_display: |
-      [[[
-        return Math.round(Number(entity.state)) + ' W';
-      ]]]
-    styles:
-      card:
-        - background: rgba(0,0,0,0.60)
-        - border-radius: clamp(9px, 1.5vw, 14px)
-        - padding: clamp(2px, 0.8vw, 4px)
-        - width: clamp(42px, 5.5vw, 58px)
-        - height: clamp(46px, 6vw, 62px)
-        - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
-      grid:
-        - grid-template-areas: |
-            "i"
-            "s"
-        - grid-template-columns: 1fr
-        - grid-template-rows: auto auto
-      icon:
-        - color: cyan
-        - width: clamp(14px, 2vw, 18px)
-        - justify-self: center
-      state:
-        - color: cyan
-        - font-size: clamp(8px, 1.6vw, 11px)
-        - font-weight: bold
-        - justify-self: center
-    style:
-      top: 18%
-      left: 93%
-  - type: custom:button-card
-    entity: climate.floor_heating
-    icon: mdi:radiator
-    show_name: false
-    show_state: true
-    tap_action:
-      action: toggle
-    state_display: |
-      [[[
-        const temp = entity.attributes.current_temperature;
-        return temp ? temp + '°C' : entity.state;
-      ]]]
-    styles:
-      card:
-        - background: |
-            [[[
-              if (entity.attributes.hvac_action === 'heating') {
-                return 'rgba(255,165,0,0.65)';
+square: false
+type: grid
+columns: 2
+cards:
+  - type: picture-elements
+    image: /local/HA_home11_1.png
+    aspect_ratio: 1/1
+    elements:
+      - type: custom:button-card
+        entity: sensor.kholodilnik_power
+        icon: mdi:fridge-outline
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            return Math.round(Number(entity.state)) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+                  if (sw && sw.state === 'off') return 'rgba(40,40,40,0.55)';
+                  return 'rgba(0,0,0,0.60)';
+                ]]]
+            - border-radius: clamp(9px, 1.5vw, 14px)
+            - padding: 4px
+            - width: clamp(70px, 8vw, 95px)
+            - height: clamp(32px, 4vw, 42px)
+            - box-shadow: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+                  if (sw && sw.state === 'off') return '0 0 clamp(4px, 1vw, 8px) rgba(80,80,80,0.35)';
+                  return '0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)';
+                ]]]
+          grid:
+            - grid-template-areas: |
+                "i s"
+            - grid-template-columns: 18px auto
+            - grid-template-rows: 1fr
+            - column-gap: 6px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+                  if (sw && sw.state === 'off') return 'gray';
+                  return 'cyan';
+                ]]]
+            - width: 18px
+          state:
+            - color: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+                  if (sw && sw.state === 'off') return 'gray';
+                  return 'cyan';
+                ]]]
+            - font-size: clamp(8px, 1.5vw, 11px)
+            - font-weight: bold
+        style:
+          top: 75%
+          left: 92%
+      - type: custom:button-card
+        entity: sensor.smart_plug_power
+        icon: mdi:microwave
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            return Math.round(Number(entity.state)) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+                  if (sw && sw.state === 'off') return 'rgba(40,40,40,0.55)';
+                  return 'rgba(0,0,0,0.60)';
+                ]]]
+            - border-radius: clamp(9px, 1.5vw, 14px)
+            - padding: 4px
+            - width: clamp(70px, 8vw, 95px)
+            - height: clamp(32px, 4vw, 42px)
+            - box-shadow: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+                  if (sw && sw.state === 'off') return '0 0 clamp(4px, 1vw, 8px) rgba(80,80,80,0.35)';
+                  return '0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)';
+                ]]]
+          grid:
+            - grid-template-areas: |
+                "i s"
+            - grid-template-columns: 18px auto
+            - grid-template-rows: 1fr
+            - column-gap: 6px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+                  if (sw && sw.state === 'off') return 'gray';
+                  return 'cyan';
+                ]]]
+            - width: 18px
+          state:
+            - color: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+                  if (sw && sw.state === 'off') return 'gray';
+                  return 'cyan';
+                ]]]
+            - font-size: clamp(8px, 1.5vw, 11px)
+            - font-weight: bold
+        style:
+          top: 68%
+          left: 92%
+      - type: custom:button-card
+        entity: sensor.boiler_power
+        icon: mdi:water-boiler
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            return Math.round(Number(entity.state)) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(9px, 1.5vw, 14px)
+            - padding: clamp(2px, 0.8vw, 4px)
+            - width: clamp(42px, 5.5vw, 58px)
+            - height: clamp(46px, 6vw, 62px)
+            - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: |
+                "i"
+                "s"
+            - grid-template-columns: 1fr
+            - grid-template-rows: auto auto
+          icon:
+            - color: cyan
+            - width: clamp(14px, 2vw, 18px)
+            - justify-self: center
+          state:
+            - color: cyan
+            - font-size: clamp(8px, 1.6vw, 11px)
+            - font-weight: bold
+            - justify-self: center
+        style:
+          top: 8%
+          left: 60%
+      - type: custom:button-card
+        entity: sensor.kompiuter_power
+        icon: mdi:desktop-tower-monitor
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            return Math.round(Number(entity.state)) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(9px, 1.5vw, 14px)
+            - padding: clamp(2px, 0.8vw, 4px)
+            - width: clamp(42px, 5.5vw, 58px)
+            - height: clamp(46px, 6vw, 62px)
+            - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: |
+                "i"
+                "s"
+            - grid-template-columns: 1fr
+            - grid-template-rows: auto auto
+          icon:
+            - color: cyan
+            - width: clamp(14px, 2vw, 18px)
+            - justify-self: center
+          state:
+            - color: cyan
+            - font-size: clamp(8px, 1.6vw, 11px)
+            - font-weight: bold
+            - justify-self: center
+        style:
+          top: 87%
+          left: 40%
+      - type: custom:button-card
+        entity: sensor.ups_power
+        icon: mdi:transmission-tower
+        show_name: false
+        show_state: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            return Math.round(Number(entity.state)) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(9px, 1.5vw, 14px)
+            - padding: clamp(2px, 0.8vw, 4px)
+            - width: clamp(42px, 5.5vw, 58px)
+            - height: clamp(46px, 6vw, 62px)
+            - box-shadow: 0 0 clamp(7px, 1.5vw, 14px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: |
+                "i"
+                "s"
+            - grid-template-columns: 1fr
+            - grid-template-rows: auto auto
+          icon:
+            - color: cyan
+            - width: clamp(14px, 2vw, 18px)
+            - justify-self: center
+          state:
+            - color: cyan
+            - font-size: clamp(8px, 1.6vw, 11px)
+            - font-weight: bold
+            - justify-self: center
+        style:
+          top: 18%
+          left: 93%
+      - type: custom:button-card
+        entity: climate.floor_heating
+        icon: mdi:radiator
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        state_display: |
+          [[[
+            const temp = entity.attributes.current_temperature;
+            return temp ? temp + '°C' : entity.state;
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.attributes.hvac_action === 'heating') {
+                    return 'rgba(255,165,0,0.65)';
+                  }
+
+                  return 'rgba(0,0,0,0.5)';
+                ]]]
+            - border-radius: clamp(10px, 2vw, 18px)
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  if (entity.attributes.hvac_action === 'heating') {
+                    return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+          icon:
+            - width: clamp(18px, 3vw, 30px)
+            - color: |
+                [[[
+                  const action = entity.attributes.hvac_action;
+                  const state = entity.state;
+
+                  if (action === 'heating' || action === 'heat' || action === 'running') {
+                    return '#ff0000';
+                  }
+
+                  if (state !== 'off') {
+                    return 'orange';
+                  }
+
+                  return 'gray';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(9px, 1.8vw, 16px)
+            - font-weight: bold
+        style:
+          top: 84%
+          left: 57%
+      - type: custom:button-card
+        entity: climate.floor_heating
+        icon: mdi:circle
+        show_name: false
+        show_state: false
+        tap_action:
+          action: none
+        styles:
+          card:
+            - background: none
+            - box-shadow: none
+            - width: clamp(6px, 1vw, 10px)
+            - height: clamp(6px, 1vw, 10px)
+          icon:
+            - width: clamp(8px, 1.5vw, 14px)
+            - color: |
+                [[[
+                  const current = Number(entity.attributes.current_temperature);
+                  const target = Number(entity.attributes.temperature);
+
+                  if (entity.state !== 'off' && target > current) {
+                    return '#ff0000';
+                  }
+
+                  return 'transparent';
+                ]]]
+        style:
+          top: 83%
+          left: 59%
+      - type: custom:button-card
+        entity: light.dimmer_kukhnia
+        icon: mdi:led-strip-variant
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        state_display: |
+          [[[
+            if (entity.state === 'on') {
+              return Math.round(entity.attributes.brightness / 2.55) + '%';
+            }
+
+            return 'Вимк.';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(255,215,0,0.25), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 clamp(8px, 2vw, 18px) rgba(255,215,0,0.65)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid rgba(255,215,0,0.75)';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+          icon:
+            - width: clamp(18px, 3vw, 32px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#FFD700'
+                    : 'gray';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(8px, 1.5vw, 12px)
+            - font-weight: bold
+        style:
+          top: 58%
+          left: 82%
+      - type: custom:button-card
+        entity: input_boolean.lamps_eva_virtual
+        icon: mdi:lightbulb
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        state_display: |
+          [[[
+            return states['input_number.lamps_eva_brightness'].state + '%';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(255,215,0,0.35), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid gold';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+          icon:
+            - width: clamp(20px, 3.2vw, 32px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#FFD700'
+                    : 'gray';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(8px, 1.5vw, 12px)
+            - font-weight: bold
+        style:
+          top: 24%
+          left: 13%
+      - type: custom:button-card
+        entity: media_player.samsung_7_series_60_ue60ks7080
+        icon: mdi:television
+        show_name: false
+        show_state: false
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(0,255,255,0.35), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 clamp(8px, 2vw, 22px) cyan';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid cyan';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+          icon:
+            - width: clamp(20px, 3.4vw, 34px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? 'cyan'
+                    : 'gray';
+                ]]]
+        style:
+          top: 63%
+          left: 52%
+      - type: custom:button-card
+        entity: switch.tesla_switch
+        icon: mdi:car-electric
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        state_display: |
+          [[[
+            const p = states['sensor.anma_charger_power_2'];
+
+            if (p && !['unknown','unavailable'].includes(p.state)) {
+              return Number(p.state).toFixed(2) + ' kW';
+            }
+
+            return entity.state === 'on' ? 'ON' : 'OFF';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(0,255,120,0.45), rgba(0,0,0,0.70))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 clamp(10px, 2.5vw, 28px) rgba(0,255,120,0.95)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid rgba(0,255,120,0.9)';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+          icon:
+            - width: clamp(20px, 3.4vw, 34px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#00ff78'
+                    : 'gray';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(7px, 1.3vw, 10px)
+            - font-weight: bold
+        style:
+          top: 93%
+          left: 30%
+      - type: custom:button-card
+        entity: sensor.anma_battery_level
+        icon: mdi:battery-high
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            if (entity.state && !['unknown','unavailable'].includes(entity.state)) {
+              return Math.round(Number(entity.state)) + '%';
+            }
+            return '--%';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.45)
+            - border-radius: clamp(10px, 1.8vw, 18px)
+            - width: clamp(52px, 7vw, 78px)
+            - height: clamp(34px, 4.8vw, 46px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: 0 0 clamp(8px, 2vw, 18px) rgba(0,255,255,0.65)
+            - border: 1px solid rgba(0,255,255,0.55)
+          icon:
+            - width: clamp(14px, 2.4vw, 24px)
+            - color: "#00ffff"
+          state:
+            - color: "#00ffff"
+            - font-size: clamp(9px, 1.7vw, 14px)
+            - font-weight: bold
+        style:
+          top: 88%
+          left: 23%
+      - type: custom:button-card
+        entity: sensor.batki_ups_power
+        icon: mdi:transmission-tower
+        show_name: true
+        name: БАТЬКИ
+        show_state: true
+        state_display: |
+          [[[
+            if (entity.state && !['unknown','unavailable'].includes(entity.state)) {
+              return Math.round(Number(entity.state)) + ' W';
+            }
+            return 'OFF';
+          ]]]
+        tap_action:
+          action: more-info
+        styles:
+          card:
+            - background: |
+                [[[
+                  const p = Number(entity.state);
+
+                  if (p > 1200)
+                    return 'radial-gradient(circle, rgba(0,255,255,0.30), rgba(0,0,0,0.78))';
+
+                  if (p > 300)
+                    return 'rgba(0,0,0,0.60)';
+
+                  return 'rgba(0,0,0,0.38)';
+                ]]]
+            - border-radius: clamp(10px, 2vw, 20px)
+            - width: clamp(58px, 9vw, 90px)
+            - height: clamp(42px, 6.5vw, 62px)
+            - padding: clamp(3px, 0.8vw, 6px)
+            - border: 1px solid rgba(0,255,255,0.35)
+            - box-shadow: |
+                [[[
+                  const p = Number(entity.state);
+
+                  if (p > 1000)
+                    return '0 0 clamp(10px, 2vw, 22px) rgba(0,255,255,0.95)';
+
+                  return '0 0 clamp(4px, 1.2vw, 10px) rgba(0,255,255,0.35)';
+                ]]]
+          icon:
+            - width: clamp(14px, 2.4vw, 24px)
+            - color: "#00ffff"
+          name:
+            - color: rgba(255,255,255,0.75)
+            - font-size: clamp(6px, 1vw, 9px)
+            - font-weight: bold
+          state:
+            - color: "#00ffff"
+            - font-size: clamp(9px, 1.8vw, 18px)
+            - font-weight: bold
+        style:
+          top: 6%
+          left: 82%
+      - type: custom:button-card
+        entity: sensor.kotelnia_power
+        icon: mdi:transmission-tower
+        show_name: true
+        name: КОТЕЛЬНЯ
+        show_state: true
+        state_display: |
+          [[[
+            if (entity.state && !['unknown','unavailable'].includes(entity.state)) {
+              return Math.round(Number(entity.state)) + ' W';
+            }
+            return 'OFF';
+          ]]]
+        tap_action:
+          action: more-info
+        styles:
+          card:
+            - background: |
+                [[[
+                  const p = Number(entity.state);
+
+                  if (p > 500)
+                    return 'radial-gradient(circle, rgba(255,140,0,0.30), rgba(0,0,0,0.78))';
+
+                  if (p > 120)
+                    return 'rgba(0,0,0,0.60)';
+
+                  return 'rgba(0,0,0,0.38)';
+                ]]]
+            - border-radius: clamp(10px, 2vw, 20px)
+            - width: clamp(58px, 9vw, 92px)
+            - height: clamp(42px, 6.5vw, 62px)
+            - padding: clamp(3px, 0.8vw, 6px)
+            - border: 1px solid rgba(255,140,0,0.35)
+            - box-shadow: |
+                [[[
+                  const p = Number(entity.state);
+
+                  if (p > 500)
+                    return '0 0 clamp(10px, 2vw, 22px) rgba(255,140,0,0.95)';
+
+                  return '0 0 clamp(4px, 1.2vw, 10px) rgba(255,140,0,0.35)';
+                ]]]
+          icon:
+            - width: clamp(14px, 2.4vw, 24px)
+            - color: "#ff8c00"
+          name:
+            - color: rgba(255,255,255,0.75)
+            - font-size: clamp(6px, 1vw, 9px)
+            - font-weight: bold
+          state:
+            - color: "#ffb347"
+            - font-size: clamp(9px, 1.8vw, 18px)
+            - font-weight: bold
+        style:
+          top: 6%
+          left: 92%
+  - type: entities
+    show_header_toggle: false
+    entities:
+      - type: custom:mushroom-number-card
+        entity: input_number.lamps_eva_brightness
+        name: Eva
+        icon: mdi:lightbulb
+        layout: horizontal
+        display_mode: slider
+        fill_container: true
+        secondary: |
+          {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+            {{ states('input_number.lamps_eva_brightness') | int }}%
+          {% else %}
+            Вимкнено
+          {% endif %}
+        tap_action:
+          action: call-service
+          service: input_boolean.toggle
+          target:
+            entity_id: input_boolean.lamps_eva_virtual
+        icon_color: |
+          {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+            amber
+          {% else %}
+            grey
+          {% endif %}
+        card_mod:
+          style:
+            mushroom-number-value-control$: |
+              mushroom-slider {
+                --main-color:
+                  {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+                    rgb(255,152,0)
+                  {% else %}
+                    rgb(70,70,70)
+                  {% endif %} !important;
+
+                --bg-color:
+                  {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+                    rgba(255,152,0,0.28)
+                  {% else %}
+                    rgba(80,80,80,0.18)
+                  {% endif %} !important;
+              }
+            .: |
+              .container {
+                grid-template-columns: auto 66% !important;
               }
 
-              return 'rgba(0,0,0,0.5)';
-            ]]]
-        - border-radius: clamp(10px, 2vw, 18px)
-        - width: clamp(42px, 6vw, 60px)
-        - height: clamp(42px, 6vw, 60px)
-        - padding: clamp(2px, 0.7vw, 4px)
-        - box-shadow: |
-            [[[
-              if (entity.attributes.hvac_action === 'heating') {
-                return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
+              ha-card {
+                padding-top: 6px !important;
+                padding-bottom: 6px !important;
               }
 
-              return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
-            ]]]
-      icon:
-        - width: clamp(18px, 3vw, 30px)
-        - color: |
-            [[[
-              const action = entity.attributes.hvac_action;
-              const state = entity.state;
+              mushroom-shape-icon {
+                --icon-color:
+                  {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+                    rgb(255,152,0)
+                  {% else %}
+                    rgb(180,180,180)
+                  {% endif %} !important;
 
-              if (action === 'heating' || action === 'heat' || action === 'running') {
-                return '#ff0000';
+                --shape-color:
+                  {% if is_state('input_boolean.lamps_eva_virtual', 'on') %}
+                    rgba(255,152,0,0.25)
+                  {% else %}
+                    rgba(80,80,80,0.35)
+                  {% endif %} !important;
               }
-
-              if (state !== 'off') {
-                return 'orange';
-              }
-
-              return 'gray';
-            ]]]
-      state:
-        - color: white
-        - font-size: clamp(9px, 1.8vw, 16px)
-        - font-weight: bold
-    style:
-      top: 84%
-      left: 57%
-  - type: custom:button-card
-    entity: climate.floor_heating
-    icon: mdi:circle
-    show_name: false
-    show_state: false
-    tap_action:
-      action: none
-    styles:
-      card:
-        - background: none
-        - box-shadow: none
-        - width: clamp(6px, 1vw, 10px)
-        - height: clamp(6px, 1vw, 10px)
-      icon:
-        - width: clamp(8px, 1.5vw, 14px)
-        - color: |
-            [[[
-              const current = Number(entity.attributes.current_temperature);
-              const target = Number(entity.attributes.temperature);
-
-              if (entity.state !== 'off' && target > current) {
-                return '#ff0000';
-              }
-
-              return 'transparent';
-            ]]]
-    style:
-      top: 83%
-      left: 59%
-  - type: custom:button-card
-    entity: light.dimmer_kukhnia
-    icon: mdi:led-strip-variant
-    show_name: false
-    show_state: true
-    tap_action:
-      action: toggle
-    hold_action:
-      action: more-info
-    state_display: |
-      [[[
-        if (entity.state === 'on') {
-          return Math.round(entity.attributes.brightness / 2.55) + '%';
-        }
-
-        return 'Вимк.';
-      ]]]
-    styles:
-      card:
-        - background: |
-            [[[
-              if (entity.state === 'on') {
-                return 'radial-gradient(circle, rgba(255,215,0,0.25), rgba(0,0,0,0.65))';
-              }
-
-              return 'rgba(0,0,0,0.45)';
-            ]]]
-        - border-radius: 50%
-        - width: clamp(42px, 6vw, 60px)
-        - height: clamp(42px, 6vw, 60px)
-        - padding: clamp(2px, 0.7vw, 4px)
-        - box-shadow: |
-            [[[
-              if (entity.state === 'on') {
-                return '0 0 clamp(8px, 2vw, 18px) rgba(255,215,0,0.65)';
-              }
-
-              return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
-            ]]]
-        - border: |
-            [[[
-              if (entity.state === 'on') {
-                return '2px solid rgba(255,215,0,0.75)';
-              }
-
-              return '1px solid rgba(255,255,255,0.15)';
-            ]]]
-      icon:
-        - width: clamp(18px, 3vw, 32px)
-        - color: |
-            [[[
-              return entity.state === 'on'
-                ? '#FFD700'
-                : 'gray';
-            ]]]
-      state:
-        - color: white
-        - font-size: clamp(8px, 1.5vw, 12px)
-        - font-weight: bold
-    style:
-      top: 58%
-      left: 82%
-  - type: custom:button-card
-    entity: input_boolean.lamps_eva_virtual
-    icon: mdi:lightbulb
-    show_name: false
-    show_state: true
-    tap_action:
-      action: toggle
-    state_display: |
-      [[[
-        return states['input_number.lamps_eva_brightness'].state + '%';
-      ]]]
-    styles:
-      card:
-        - background: |
-            [[[
-              if (entity.state === 'on') {
-                return 'radial-gradient(circle, rgba(255,215,0,0.35), rgba(0,0,0,0.65))';
-              }
-
-              return 'rgba(0,0,0,0.45)';
-            ]]]
-        - border-radius: 50%
-        - width: clamp(42px, 6vw, 60px)
-        - height: clamp(42px, 6vw, 60px)
-        - padding: clamp(2px, 0.7vw, 4px)
-        - box-shadow: |
-            [[[
-              if (entity.state === 'on') {
-                return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
-              }
-
-              return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
-            ]]]
-        - border: |
-            [[[
-              if (entity.state === 'on') {
-                return '2px solid gold';
-              }
-
-              return '1px solid rgba(255,255,255,0.15)';
-            ]]]
-      icon:
-        - width: clamp(20px, 3.2vw, 32px)
-        - color: |
-            [[[
-              return entity.state === 'on'
-                ? '#FFD700'
-                : 'gray';
-            ]]]
-      state:
-        - color: white
-        - font-size: clamp(8px, 1.5vw, 12px)
-        - font-weight: bold
-    style:
-      top: 24%
-      left: 13%
-  - type: custom:button-card
-    entity: media_player.samsung_7_series_60_ue60ks7080
-    icon: mdi:television
-    show_name: false
-    show_state: false
-    tap_action:
-      action: toggle
-    hold_action:
-      action: more-info
-    styles:
-      card:
-        - background: |
-            [[[
-              if (entity.state === 'on') {
-                return 'radial-gradient(circle, rgba(0,255,255,0.35), rgba(0,0,0,0.65))';
-              }
-
-              return 'rgba(0,0,0,0.45)';
-            ]]]
-        - border-radius: 50%
-        - width: clamp(42px, 6vw, 60px)
-        - height: clamp(42px, 6vw, 60px)
-        - padding: clamp(2px, 0.7vw, 4px)
-        - box-shadow: |
-            [[[
-              if (entity.state === 'on') {
-                return '0 0 clamp(8px, 2vw, 22px) cyan';
-              }
-
-              return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
-            ]]]
-        - border: |
-            [[[
-              if (entity.state === 'on') {
-                return '2px solid cyan';
-              }
-
-              return '1px solid rgba(255,255,255,0.15)';
-            ]]]
-      icon:
-        - width: clamp(20px, 3.4vw, 34px)
-        - color: |
-            [[[
-              return entity.state === 'on'
-                ? 'cyan'
-                : 'gray';
-            ]]]
-    style:
-      top: 63%
-      left: 52%
-  - type: custom:button-card
-    entity: switch.tesla_switch
-    icon: mdi:car-electric
-    show_name: false
-    show_state: true
-    tap_action:
-      action: toggle
-    hold_action:
-      action: more-info
-    state_display: |
-      [[[
-        const p = states['sensor.anma_charger_power_2'];
-
-        if (p && !['unknown','unavailable'].includes(p.state)) {
-          return Number(p.state).toFixed(2) + ' kW';
-        }
-
-        return entity.state === 'on' ? 'ON' : 'OFF';
-      ]]]
-    styles:
-      card:
-        - background: |
-            [[[
-              if (entity.state === 'on') {
-                return 'radial-gradient(circle, rgba(0,255,120,0.45), rgba(0,0,0,0.70))';
-              }
-
-              return 'rgba(0,0,0,0.45)';
-            ]]]
-        - border-radius: 50%
-        - width: clamp(42px, 6vw, 60px)
-        - height: clamp(42px, 6vw, 60px)
-        - padding: clamp(2px, 0.7vw, 4px)
-        - box-shadow: |
-            [[[
-              if (entity.state === 'on') {
-                return '0 0 clamp(10px, 2.5vw, 28px) rgba(0,255,120,0.95)';
-              }
-
-              return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
-            ]]]
-        - border: |
-            [[[
-              if (entity.state === 'on') {
-                return '2px solid rgba(0,255,120,0.9)';
-              }
-
-              return '1px solid rgba(255,255,255,0.15)';
-            ]]]
-      icon:
-        - width: clamp(20px, 3.4vw, 34px)
-        - color: |
-            [[[
-              return entity.state === 'on'
-                ? '#00ff78'
-                : 'gray';
-            ]]]
-      state:
-        - color: white
-        - font-size: clamp(7px, 1.3vw, 10px)
-        - font-weight: bold
-    style:
-      top: 93%
-      left: 30%
-  - type: custom:button-card
-    entity: sensor.anma_battery_level
-    icon: mdi:battery-high
-    show_name: false
-    show_state: true
-    state_display: |
-      [[[
-        if (entity.state && !['unknown','unavailable'].includes(entity.state)) {
-          return Math.round(Number(entity.state)) + '%';
-        }
-        return '--%';
-      ]]]
-    styles:
-      card:
-        - background: rgba(0,0,0,0.45)
-        - border-radius: clamp(10px, 1.8vw, 18px)
-        - width: clamp(52px, 7vw, 78px)
-        - height: clamp(34px, 4.8vw, 46px)
-        - padding: clamp(2px, 0.7vw, 4px)
-        - box-shadow: 0 0 clamp(8px, 2vw, 18px) rgba(0,255,255,0.65)
-        - border: 1px solid rgba(0,255,255,0.55)
-      icon:
-        - width: clamp(14px, 2.4vw, 24px)
-        - color: "#00ffff"
-      state:
-        - color: "#00ffff"
-        - font-size: clamp(9px, 1.7vw, 14px)
-        - font-weight: bold
-    style:
-      top: 88%
-      left: 23%
-  - type: custom:button-card
-    entity: sensor.batki_ups_power
-    icon: mdi:transmission-tower
-    show_name: true
-    name: БАТЬКИ
-    show_state: true
-    state_display: |
-      [[[
-        if (entity.state && !['unknown','unavailable'].includes(entity.state)) {
-          return Math.round(Number(entity.state)) + ' W';
-        }
-        return 'OFF';
-      ]]]
-    tap_action:
-      action: more-info
-    styles:
-      card:
-        - background: |
-            [[[
-              const p = Number(entity.state);
-
-              if (p > 1200)
-                return 'radial-gradient(circle, rgba(0,255,255,0.30), rgba(0,0,0,0.78))';
-
-              if (p > 300)
-                return 'rgba(0,0,0,0.60)';
-
-              return 'rgba(0,0,0,0.38)';
-            ]]]
-        - border-radius: clamp(10px, 2vw, 20px)
-        - width: clamp(58px, 9vw, 90px)
-        - height: clamp(42px, 6.5vw, 62px)
-        - padding: clamp(3px, 0.8vw, 6px)
-        - border: 1px solid rgba(0,255,255,0.35)
-        - box-shadow: |
-            [[[
-              const p = Number(entity.state);
-
-              if (p > 1000)
-                return '0 0 clamp(10px, 2vw, 22px) rgba(0,255,255,0.95)';
-
-              return '0 0 clamp(4px, 1.2vw, 10px) rgba(0,255,255,0.35)';
-            ]]]
-      icon:
-        - width: clamp(14px, 2.4vw, 24px)
-        - color: "#00ffff"
-      name:
-        - color: rgba(255,255,255,0.75)
-        - font-size: clamp(6px, 1vw, 9px)
-        - font-weight: bold
-      state:
-        - color: "#00ffff"
-        - font-size: clamp(9px, 1.8vw, 18px)
-        - font-weight: bold
-    style:
-      top: 6%
-      left: 83%
-  - type: custom:button-card
-    entity: sensor.kotelnia_power
-    icon: mdi:transmission-tower
-    show_name: true
-    name: КОТЕЛЬНЯ
-    show_state: true
-    state_display: |
-      [[[
-        if (entity.state && !['unknown','unavailable'].includes(entity.state)) {
-          return Math.round(Number(entity.state)) + ' W';
-        }
-        return 'OFF';
-      ]]]
-    tap_action:
-      action: more-info
-    styles:
-      card:
-        - background: |
-            [[[
-              const p = Number(entity.state);
-
-              if (p > 500)
-                return 'radial-gradient(circle, rgba(255,140,0,0.30), rgba(0,0,0,0.78))';
-
-              if (p > 120)
-                return 'rgba(0,0,0,0.60)';
-
-              return 'rgba(0,0,0,0.38)';
-            ]]]
-        - border-radius: clamp(10px, 2vw, 20px)
-        - width: clamp(58px, 9vw, 92px)
-        - height: clamp(42px, 6.5vw, 62px)
-        - padding: clamp(3px, 0.8vw, 6px)
-        - border: 1px solid rgba(255,140,0,0.35)
-        - box-shadow: |
-            [[[
-              const p = Number(entity.state);
-
-              if (p > 500)
-                return '0 0 clamp(10px, 2vw, 22px) rgba(255,140,0,0.95)';
-
-              return '0 0 clamp(4px, 1.2vw, 10px) rgba(255,140,0,0.35)';
-            ]]]
-      icon:
-        - width: clamp(14px, 2.4vw, 24px)
-        - color: "#ff8c00"
-      name:
-        - color: rgba(255,255,255,0.75)
-        - font-size: clamp(6px, 1vw, 9px)
-        - font-weight: bold
-      state:
-        - color: "#ffb347"
-        - font-size: clamp(9px, 1.8vw, 18px)
-        - font-weight: bold
-    style:
-      top: 6%
-      left: 92%
+      - type: custom:mushroom-light-card
+        entity: light.dimmer_kukhnia
+        name: Яскравість кухні
+        layout: horizontal
+        show_brightness_control: true
+        show_color_temp_control: false
+        collapsible_controls: false
+        card_mod:
+          style: |
+            ha-card {
+              padding-top: 6px !important;
+              padding-bottom: 6px !important;
+            }
+      - type: custom:mushroom-climate-card
+        entity: climate.floor_heating
+        name: Температура підлоги
+        icon: mdi:thermometer
+        layout: horizontal
+        show_temperature_control: true
+        collapsible_controls: false
+        hvac_modes:
+          - heat
+          - "off"
+        card_mod:
+          style: |
+            ha-card {
+              padding-top: 6px !important;
+              padding-bottom: 6px !important;
+            }
+      - type: custom:mushroom-template-card
+        entity: switch.tesla_switch
+        primary: Tesla Model 3
+        secondary: |
+          {{ states('sensor.anma_charger_power_2') }} kW
+        icon: mdi:car-electric
+        icon_color: |
+          {% if is_state('switch.tesla_switch', 'on') %}
+            green
+          {% else %}
+            grey
+          {% endif %}
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+      - type: divider
+      - entity: sensor.kotelnia_power
+        name: Котельня
+      - entity: sensor.batki_ups_power
+        name: Батьки
+      - entity: sensor.ups_power
+        name: UPS
+      - type: divider
+      - entity: sensor.kompiuter_power
+        name: Компʼютер
+      - entity: sensor.boiler_power
+        name: Бойлер
+      - entity: sensor.kholodilnik_power
+        name: Холодильник
+      - entity: sensor.smart_plug_power
+        name: Мікрохвильовка
+grid_options:
+  rows: auto
+  columns: full
+card_mod:
+  style: |
+    @media (max-width: 900px) {
+      #root {
+        grid-template-columns: 1fr !important;
+      }
+    }
