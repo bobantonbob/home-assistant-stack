@@ -4,7 +4,7 @@ AI-generated 3D dashboards for Home Assistant: a top-view apartment control dash
 
 ![Apartment Preview](./Apartment_Dashboard.png)
 
-![Solar Roof Preview](./roof.png)
+![Solar Roof Preview](./roof_Dashboard.png)
 
 ---
 
