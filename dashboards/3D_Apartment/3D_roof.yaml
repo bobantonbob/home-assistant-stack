@@ -1,0 +1,1435 @@
+type: picture-elements
+image:
+  media_content_id: /local/roof.png
+card_mod:
+  style: |
+    ha-card {
+      width: min(100vw, calc(100dvh - 90px));
+      height: min(100vw, calc(100dvh - 90px));
+      margin: 0 auto;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: none;
+    }
+elements:
+  - type: custom:button-card
+    entity: sensor.sun_day_progress
+    show_name: false
+    show_state: false
+    show_icon: false
+    tap_action:
+      action: more-info
+    style:
+      left: 50%
+      top: 84%
+      width: 88%
+      transform: translate(-50%, -50%)
+    custom_fields:
+      track: ""
+      sun: |
+        [[[
+          return '☀';
+        ]]]
+      value: |
+        [[[
+          const p = Number(states['sensor.sun_day_progress']?.state || 0);
+          return `${Math.round(p)}%`;
+        ]]]
+    styles:
+      card:
+        - position: relative
+        - height: clamp(34px, 4vw, 44px)
+        - background: rgba(0, 0, 0, 0.18)
+        - border-radius: 999px
+        - box-shadow: none
+        - border: none
+        - padding: 0
+      custom_fields:
+        track:
+          - position: absolute
+          - left: 4%
+          - top: 50%
+          - width: 92%
+          - height: 4px
+          - transform: translateY(-50%)
+          - background: >-
+              linear-gradient(90deg, rgba(255,213,79,0.18),
+              rgba(255,213,79,0.55), rgba(255,213,79,0.18))
+          - border-radius: 999px
+          - box-shadow: 0 0 8px rgba(255,213,79,0.35)
+        sun:
+          - position: absolute
+          - top: 50%
+          - left: |
+              [[[
+                const p = Math.max(0, Math.min(100, Number(states['sensor.sun_day_progress']?.state || 0)));
+                return `calc(4% + ${p * 0.92}% - 14px)`;
+              ]]]
+          - transform: translateY(-50%)
+          - font-size: clamp(18px, 2vw, 26px)
+          - color: "#ffd54f"
+          - filter: drop-shadow(0 0 8px rgba(255,213,79,0.95))
+        value:
+          - position: absolute
+          - right: 2%
+          - top: "-2px"
+          - font-size: clamp(9px, 1vw, 12px)
+          - font-weight: 700
+          - color: "#ffd54f"
+  - type: image
+    image: /local/animated_roof_strings_overlay.svg
+    style:
+      left: 50%
+      top: 50%
+      width: 100%
+      transform: translate(-50%, -50%)
+      pointer-events: none
+  - type: conditional
+    conditions:
+      - entity: switch.sonoff4_ha_sonoff_1000066f8f_1
+        state: "on"
+    elements:
+      - type: image
+        image: /local/animated_roof_microinverters_overlay_v2.svg
+        style:
+          left: 50%
+          top: 50%
+          width: 100%
+          transform: translate(-50%, -50%)
+          pointer-events: none
+  - type: image
+    entity: camera.network_video_recorder_channel_2
+    camera_image: camera.network_video_recorder_channel_2
+    camera_view: live
+    tap_action:
+      action: more-info
+    style:
+      left: 84%
+      top: 48%
+      transform: translate(-50%, -50%)
+      width: clamp(110px, 18vw, 220px)
+      border-radius: clamp(8px, 1vw, 14px)
+      overflow: hidden
+      border: 1px solid rgba(0, 229, 255, 0.85)
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_today
+    name: СЬОГОДНІ
+    icon: mdi:white-balance-sunny
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 10%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(45, 32, 4, 0.72)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255, 210, 70, 0.85)
+        - box-shadow: 0 0 12px rgba(255, 210, 70, 0.35)
+      icon:
+        - color: "#ffd54f"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffd54f"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_tomorrow
+    name: ЗАВТРА
+    icon: mdi:weather-sunny
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 23.3%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255, 210, 70, 0.55)
+      icon:
+        - color: "#ffd54f"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffd54f"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_day_3
+    name: ДЕНЬ 3
+    icon: mdi:weather-partly-cloudy
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 36.6%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255,255,255,0.16)
+      icon:
+        - color: "#ffe082"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffe082"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_day_4
+    name: ДЕНЬ 4
+    icon: mdi:weather-partly-cloudy
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 50%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255,255,255,0.16)
+      icon:
+        - color: "#ffe082"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffe082"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_day_5
+    name: ДЕНЬ 5
+    icon: mdi:weather-partly-cloudy
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 63.3%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255,255,255,0.16)
+      icon:
+        - color: "#ffe082"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffe082"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_day_6
+    name: ДЕНЬ 6
+    icon: mdi:weather-partly-cloudy
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 76.6%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255,255,255,0.16)
+      icon:
+        - color: "#ffe082"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffe082"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: custom:button-card
+    entity: sensor.solcast_pv_forecast_forecast_day_7
+    name: ДЕНЬ 7
+    icon: mdi:calendar-week
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 90%
+      top: 93%
+      transform: translate(-50%, -50%)
+      width: clamp(70px, 11vw, 120px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i\" \"s\" \"n\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: min-content min-content min-content
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: 1px solid rgba(255,255,255,0.16)
+      icon:
+        - color: "#ffe082"
+        - width: clamp(18px, 2.2vw, 26px)
+        - justify-self: center
+      state:
+        - color: "#ffe082"
+        - font-size: clamp(10px, 1.25vw, 15px)
+        - font-weight: 800
+        - justify-self: center
+      name:
+        - color: white
+        - font-size: clamp(7px, 0.9vw, 11px)
+        - font-weight: 600
+        - justify-self: center
+  - type: image
+    entity: camera.network_video_recorder_channel_1
+    camera_image: camera.network_video_recorder_channel_1
+    camera_view: live
+    tap_action:
+      action: more-info
+    style:
+      left: 84%
+      top: 12%
+      transform: translate(-50%, -50%)
+      width: clamp(110px, 18vw, 220px)
+      border-radius: clamp(8px, 1vw, 14px)
+      overflow: hidden
+      border: 1px solid rgba(0, 229, 255, 0.85)
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+  - type: custom:button-card
+    entity: sensor.today_sun
+    name: СОНЦЕ СЬОГОДНІ
+    icon: mdi:white-balance-sunny
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 40%
+      top: 7%
+      transform: translate(-50%, -50%)
+      width: clamp(140px, 22vw, 230px)
+    extra_styles: |
+      @keyframes sunTotalPulse {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 12px rgba(255, 210, 70, 0.35);
+        }
+        50% {
+          box-shadow:
+            0 0 0 9px rgba(255, 210, 70, 0.08),
+            0 0 26px rgba(255, 210, 70, 0.80);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 12px rgba(255, 210, 70, 0.35);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(6px, 1vw, 10px)
+      card:
+        - background: rgba(58, 42, 5, 0.76)
+        - border-radius: clamp(12px, 1.2vw, 18px)
+        - padding: clamp(6px, 1vw, 10px)
+        - border: 1px solid rgba(255, 210, 70, 0.95)
+        - animation: |
+            [[[
+              return Number(entity.state) > 0.1
+                ? 'sunTotalPulse 2s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: "#ffd54f"
+        - width: clamp(20px, 2.6vw, 32px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1.1vw, 13px)
+        - font-weight: 700
+        - letter-spacing: 0.4px
+        - justify-self: start
+      state:
+        - color: "#ffd54f"
+        - font-size: clamp(14px, 1.8vw, 22px)
+        - font-weight: 800
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.deye_today_production
+    name: DEYE / СТРІНГИ
+    icon: mdi:solar-power-variant
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 31%
+      top: 15%
+      transform: translate(-50%, -50%)
+      width: clamp(118px, 17vw, 190px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(5px, 0.8vw, 9px)
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 15px)
+        - padding: clamp(5px, 0.8vw, 9px)
+        - border: 1px solid rgba(255, 210, 70, 0.75)
+        - box-shadow: |
+            [[[
+              return Number(entity.state) > 0.1
+                ? '0 0 14px rgba(255, 210, 70, 0.45)'
+                : '0 0 8px rgba(255,255,255,0.10)';
+            ]]]
+      icon:
+        - color: "#ffd54f"
+        - width: clamp(17px, 2.1vw, 26px)
+      name:
+        - color: white
+        - font-size: clamp(8px, 1vw, 12px)
+        - font-weight: 600
+        - justify-self: start
+      state:
+        - color: "#ffd54f"
+        - font-size: clamp(11px, 1.4vw, 17px)
+        - font-weight: 800
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.deye_microinverter_energy_today
+    name: МІКРОІНВЕРТОРИ
+    icon: mdi:solar-panel-large
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 49%
+      top: 15%
+      transform: translate(-50%, -50%)
+      width: clamp(118px, 17vw, 190px)
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(5px, 0.8vw, 9px)
+      card:
+        - background: rgba(0,0,0,0.62)
+        - border-radius: clamp(10px, 1vw, 15px)
+        - padding: clamp(5px, 0.8vw, 9px)
+        - border: 1px solid rgba(79, 195, 255, 0.75)
+        - box-shadow: |
+            [[[
+              return Number(entity.state) > 0.1
+                ? '0 0 14px rgba(79, 195, 255, 0.45)'
+                : '0 0 8px rgba(255,255,255,0.10)';
+            ]]]
+      icon:
+        - color: "#4fc3ff"
+        - width: clamp(17px, 2.1vw, 26px)
+      name:
+        - color: white
+        - font-size: clamp(8px, 1vw, 12px)
+        - font-weight: 600
+        - justify-self: start
+      state:
+        - color: "#4fc3ff"
+        - font-size: clamp(11px, 1.4vw, 17px)
+        - font-weight: 800
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.beny_pv_power
+    name: BENY
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+
+        if (v >= 1000) {
+          return (v / 1000).toFixed(2) + ' kW';
+        }
+
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 58%
+      top: 48%
+      transform: translate(-50%, -50%)
+      width: clamp(64px, 8vw, 98px)
+    extra_styles: |
+      @keyframes benyPvPulseYellow {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'benyPvPulseYellow 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.inverter_pv1_power
+    name: PV1
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+
+        if (v >= 1000) {
+          return (v / 1000).toFixed(2) + ' kW';
+        }
+
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 9%
+      top: 25%
+      transform: translate(-50%, -50%)
+      width: clamp(60px, 7.5vw, 92px)
+    extra_styles: |
+      @keyframes edgePvPulseYellow1 {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'edgePvPulseYellow1 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.inverter_pv2_power
+    name: PV2
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+
+        if (v >= 1000) {
+          return (v / 1000).toFixed(2) + ' kW';
+        }
+
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 9%
+      top: 50%
+      transform: translate(-50%, -50%)
+      width: clamp(60px, 7.5vw, 92px)
+    extra_styles: |
+      @keyframes edgePvPulseYellow2 {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'edgePvPulseYellow2 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.deye_pv1_power
+    name: PV1
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+
+        if (v >= 1000) {
+          return (v / 1000).toFixed(2) + ' kW';
+        }
+
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 31%
+      top: 27%
+      transform: translate(-50%, -50%)
+      width: clamp(64px, 8vw, 96px)
+    extra_styles: |
+      @keyframes deyePvPulseYellow1 {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'deyePvPulseYellow1 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.deye_pv2_power
+    name: PV2
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+
+        if (v >= 1000) {
+          return (v / 1000).toFixed(2) + ' kW';
+        }
+
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 31%
+      top: 43%
+      transform: translate(-50%, -50%)
+      width: clamp(64px, 8vw, 96px)
+    extra_styles: |
+      @keyframes deyePvPulseYellow2 {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'deyePvPulseYellow2 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.deye_load_power
+    name: LOAD
+    icon: mdi:home-lightning-bolt
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+
+        if (v >= 1000) {
+          return (v / 1000).toFixed(2) + ' kW';
+        }
+
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 76%
+      top: 67%
+      transform: translate(-50%, -50%)
+      width: clamp(78px, 9vw, 122px)
+    extra_styles: |
+      @keyframes loadPulseOrange {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 152, 0, 0.60),
+            0 0 10px rgba(255, 152, 0, 0.25);
+        }
+        50% {
+          box-shadow:
+            0 0 0 8px rgba(255, 152, 0, 0.08),
+            0 0 24px rgba(255, 152, 0, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 152, 0, 0),
+            0 0 10px rgba(255, 152, 0, 0.25);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(5px, 0.8vw, 9px)
+      card:
+        - background: |
+            [[[
+              const v = Number(entity.state);
+              if (v > 100) return 'rgba(68, 38, 8, 0.72)';
+              return 'rgba(0, 0, 0, 0.58)';
+            ]]]
+        - border-radius: clamp(12px, 1vw, 16px)
+        - padding: clamp(6px, 0.9vw, 10px)
+        - border: |
+            [[[
+              const v = Number(entity.state);
+              if (v > 100) return '1px solid rgba(255, 193, 7, 0.95)';
+              return '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              const v = Number(entity.state);
+              if (v > 100) return 'loadPulseOrange 1.8s ease-in-out infinite';
+              return 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              const v = Number(entity.state);
+              if (v > 100) return '#ffc107';
+              return '#e8f0ff';
+            ]]]
+        - width: clamp(18px, 2.3vw, 28px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              const v = Number(entity.state);
+              if (v > 100) return '#ffd86b';
+              return 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.deye_battery
+    name: АКБ
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    icon: |
+      [[[
+        const soc = Number(entity.state);
+        const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+        if (isNaN(soc)) return 'mdi:battery-unknown';
+
+        if (p > 80) return 'mdi:battery-charging';
+
+        if (soc >= 95) return 'mdi:battery';
+        if (soc >= 85) return 'mdi:battery-90';
+        if (soc >= 75) return 'mdi:battery-80';
+        if (soc >= 55) return 'mdi:battery-60';
+        if (soc >= 35) return 'mdi:battery-40';
+        if (soc >= 15) return 'mdi:battery-20';
+
+        return 'mdi:battery-outline';
+      ]]]
+    state_display: |
+      [[[
+        const soc = Number(entity.state);
+        const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+        if (isNaN(soc)) return '—';
+
+        if (p > 80) return Math.round(soc) + '% • заряд';
+        if (p < -80) return Math.round(soc) + '% • розряд';
+
+        return Math.round(soc) + '%';
+      ]]]
+    style:
+      left: 76%
+      top: 76%
+      transform: translate(-50%, -50%)
+      width: clamp(76px, 9vw, 118px)
+    extra_styles: |
+      @keyframes batteryPulseGreen {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(76, 175, 80, 0.55),
+            0 0 10px rgba(76, 175, 80, 0.25);
+        }
+        50% {
+          box-shadow:
+            0 0 0 8px rgba(76, 175, 80, 0.08),
+            0 0 22px rgba(76, 175, 80, 0.70);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(76, 175, 80, 0),
+            0 0 10px rgba(76, 175, 80, 0.25);
+        }
+      }
+
+      @keyframes batteryPulseBlue {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(33, 150, 243, 0.55),
+            0 0 10px rgba(33, 150, 243, 0.25);
+        }
+        50% {
+          box-shadow:
+            0 0 0 8px rgba(33, 150, 243, 0.08),
+            0 0 22px rgba(33, 150, 243, 0.70);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(33, 150, 243, 0),
+            0 0 10px rgba(33, 150, 243, 0.25);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(5px, 0.8vw, 9px)
+      card:
+        - background: |
+            [[[
+              const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+              if (p > 80) return 'rgba(18, 58, 28, 0.70)';
+              if (p < -80) return 'rgba(14, 36, 68, 0.70)';
+              return 'rgba(0, 0, 0, 0.58)';
+            ]]]
+        - border-radius: clamp(12px, 1vw, 16px)
+        - padding: clamp(6px, 0.9vw, 10px)
+        - border: |
+            [[[
+              const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+              if (p > 80) return '1px solid rgba(76, 175, 80, 0.95)';
+              if (p < -80) return '1px solid rgba(33, 150, 243, 0.95)';
+              return '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+              if (p > 80) return 'batteryPulseGreen 1.8s ease-in-out infinite';
+              if (p < -80) return 'batteryPulseBlue 1.8s ease-in-out infinite';
+              return 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+              if (p > 80) return '#66bb6a';
+              if (p < -80) return '#42a5f5';
+              return '#e8f0ff';
+            ]]]
+        - width: clamp(18px, 2.3vw, 28px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+              if (p > 80) return '#8df59a';
+              if (p < -80) return '#78c3ff';
+              return 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.inverter_2_pv1_power
+    name: PV1
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 77%
+      top: 28%
+      transform: translate(-50%, -50%)
+      width: clamp(64px, 8vw, 96px)
+    extra_styles: |
+      @keyframes pvPulseYellow {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'pvPulseYellow 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
+  - type: custom:button-card
+    entity: sensor.inverter_2_pv2_power
+    name: PV2
+    icon: mdi:solar-panel
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 W';
+        return Math.round(v) + ' W';
+      ]]]
+    style:
+      left: 89%
+      top: 28%
+      transform: translate(-50%, -50%)
+      width: clamp(64px, 8vw, 96px)
+    extra_styles: |
+      @keyframes pvPulseYellow2 {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+        50% {
+          box-shadow:
+            0 0 0 7px rgba(255, 210, 70, 0.08),
+            0 0 18px rgba(255, 210, 70, 0.75);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 8px rgba(255, 210, 70, 0.30);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(4px, 0.7vw, 8px)
+      card:
+        - background: rgba(0,0,0,0.58)
+        - border-radius: clamp(10px, 1vw, 14px)
+        - padding: clamp(4px, 0.8vw, 8px)
+        - border: |
+            [[[
+              return Number(entity.state) > 10
+                ? '1px solid rgba(255, 210, 70, 0.95)'
+                : '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - animation: |
+            [[[
+              return Number(entity.state) > 10
+                ? 'pvPulseYellow2 1.8s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+            ]]]
+        - width: clamp(16px, 2vw, 24px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1vw, 12px)
+        - font-weight: 600
+        - align-self: end
+        - justify-self: start
+      state:
+        - color: |
+            [[[
+              return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+            ]]]
+        - font-size: clamp(10px, 1.2vw, 14px)
+        - font-weight: 700
+        - align-self: start
+        - justify-self: start
