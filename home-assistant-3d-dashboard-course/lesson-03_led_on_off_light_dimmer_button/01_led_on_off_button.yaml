@@ -1,0 +1,65 @@
+- type: custom:button-card
+  entity: switch.wifi_breaker_t_switch_1
+  icon: mdi:led-strip-variant
+  show_name: false
+  show_state: true
+
+  tap_action:
+    action: toggle
+
+  hold_action:
+    action: more-info
+
+  state_display: |
+    [[[
+      return entity.state === 'on' ? 'ON' : 'OFF';
+    ]]]
+
+  styles:
+    card:
+      - background: |
+          [[[
+            if (entity.state === 'on') {
+              return 'radial-gradient(circle, rgba(255,215,0,0.35), rgba(0,0,0,0.65))';
+            }
+
+            return 'rgba(0,0,0,0.45)';
+          ]]]
+      - border-radius: 50%
+      - width: 56px
+      - height: 56px
+      - padding: 4px
+      - box-shadow: |
+          [[[
+            if (entity.state === 'on') {
+              return '0 0 24px rgba(255,215,0,0.95)';
+            }
+
+            return '0 0 8px rgba(0,0,0,0.6)';
+          ]]]
+      - border: |
+          [[[
+            if (entity.state === 'on') {
+              return '2px solid rgba(255,215,0,0.85)';
+            }
+
+            return '1px solid rgba(255,255,255,0.15)';
+          ]]]
+
+    icon:
+      - width: 30px
+      - color: |
+          [[[
+            return entity.state === 'on'
+              ? '#FFD700'
+              : 'gray';
+          ]]]
+
+    state:
+      - color: white
+      - font-size: 10px
+      - font-weight: bold
+
+  style:
+    top: 49%
+    left: 96%

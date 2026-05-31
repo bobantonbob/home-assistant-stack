@@ -1,0 +1,77 @@
+- type: custom:button-card
+  entity: light.dimmer_kukhnia
+  icon: mdi:led-strip-variant
+  show_name: false
+  show_state: true
+
+  tap_action:
+    action: toggle
+
+  hold_action:
+    action: more-info
+
+  state_display: |
+    [[[
+      if (entity.state === 'off') return 'OFF';
+
+      let brightness = entity.attributes.brightness;
+      if (brightness === undefined) return 'ON';
+
+      let percent = Math.round(brightness / 255 * 100);
+      return percent + '%';
+    ]]]
+
+  styles:
+    card:
+      - background: |
+          [[[
+            if (entity.state === 'on') {
+              let brightness = entity.attributes.brightness || 255;
+              let opacity = 0.15 + (brightness / 255) * 0.45;
+
+              return `radial-gradient(circle, rgba(255,215,0,${opacity}), rgba(0,0,0,0.65))`;
+            }
+
+            return 'rgba(0,0,0,0.45)';
+          ]]]
+      - border-radius: 50%
+      - width: 56px
+      - height: 56px
+      - padding: 4px
+      - box-shadow: |
+          [[[
+            if (entity.state === 'on') {
+              let brightness = entity.attributes.brightness || 255;
+              let blur = 8 + (brightness / 255) * 20;
+
+              return `0 0 ${blur}px rgba(255,215,0,0.95)`;
+            }
+
+            return '0 0 8px rgba(0,0,0,0.6)';
+          ]]]
+      - border: |
+          [[[
+            if (entity.state === 'on') {
+              return '2px solid rgba(255,215,0,0.85)';
+            }
+
+            return '1px solid rgba(255,255,255,0.15)';
+          ]]]
+
+    icon:
+      - width: 30px
+      - color: |
+          [[[
+            return entity.state === 'on'
+              ? '#FFD700'
+              : 'gray';
+          ]]]
+
+    state:
+      - color: white
+      - font-size: 10px
+      - font-weight: bold
+
+  style:
+    top: 49%
+    left: 96%
