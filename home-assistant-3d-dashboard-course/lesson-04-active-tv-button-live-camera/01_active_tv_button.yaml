@@ -1,1 +1,51 @@
 
+type: custom:button-card
+style:
+  top: 65%
+  left: 50%
+entity: media_player.samsung_7_series_60_ue60ks7080
+icon: mdi:television
+show_name: false
+show_state: false
+tap_action:
+  action: toggle
+hold_action:
+  action: more-info
+styles:
+  card:
+    - background: |
+        [[[
+          if (entity.state === 'on') {
+            return 'radial-gradient(circle, rgba(0,255,255,0.35), rgba(0,0,0,0.65))';
+          }
+
+          return 'rgba(0,0,0,0.45)';
+        ]]]
+    - border-radius: 50%
+    - width: clamp(42px, 6vw, 60px)
+    - height: clamp(42px, 6vw, 60px)
+    - padding: clamp(2px, 0.7vw, 4px)
+    - box-shadow: |
+        [[[
+          if (entity.state === 'on') {
+            return '0 0 clamp(8px, 2vw, 22px) cyan';
+          }
+
+          return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+        ]]]
+    - border: |
+        [[[
+          if (entity.state === 'on') {
+            return '2px solid cyan';
+          }
+
+          return '1px solid rgba(255,255,255,0.15)';
+        ]]]
+  icon:
+    - width: clamp(20px, 3.4vw, 34px)
+    - color: |
+        [[[
+          return entity.state === 'on'
+            ? 'cyan'
+            : 'gray';
+        ]]]
