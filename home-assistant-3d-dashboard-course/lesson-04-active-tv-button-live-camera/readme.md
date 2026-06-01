@@ -459,6 +459,11 @@ home-assistant-stack / home-assistant-3d-dashboard-course / lesson-04-active-tv-
 https://t.me/anma_electric
 
 ---
+## ▶️ Відео уроку
+https://youtu.be/iCmSAX7AjwA
+
+## 📚 Плейлист курсу
+https://www.youtube.com/playlist?list=PLWo_AYhwCKTYjH7dXVjOddqfM8Hl3zIvo
 
 ## 🏷️ Keywords / SEO
 
