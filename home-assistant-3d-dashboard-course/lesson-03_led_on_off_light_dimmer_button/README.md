@@ -749,10 +749,16 @@ style:
 - інтерактивні панелі для всього будинку.
 
 ---
+## 🔗 Корисні посилання
+
+- **Telegram-канал ANMA Electric:** [@ANMA_ELECTRIC](https://t.me/ANMAelectric)
+- **Telegram-група для обговорення Home Assistant, дашбордів, Deye, енергомоніторингу та розумного будинку:** [приєднатися до групи](https://t.me/+IurOiumcWlv3OTEy)
+- **GitHub-репозиторій з файлами курсу:** [home-assistant-stack](https://github.com/bobantonbob/home-assistant-stack)
 
 ## 🎬 Відео
 
 Назва відео:
+https://youtu.be/d14denK9YnE
 
 ```text
 3D Dashboard Home Assistant ⚡ Кнопка ON/OFF + димер на плані кімнати | Заняття 3
