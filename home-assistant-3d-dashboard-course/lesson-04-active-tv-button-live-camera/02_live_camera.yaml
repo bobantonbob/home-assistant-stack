@@ -1,0 +1,16 @@
+type: image
+entity: camera.network_video_recorder_channel_3
+camera_image: camera.network_video_recorder_channel_3
+camera_view: live
+tap_action:
+  action: more-info
+style:
+  left: 85%
+  top: 35%
+  transform: translate(-50%, -50%)
+  width: clamp(60px, 8vw, 80px)
+  border-radius: clamp(8px, 1vw, 14px)
+  overflow: hidden
+  border: 1px solid rgba(0, 229, 255, 0.85)
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+  z-index: 30
