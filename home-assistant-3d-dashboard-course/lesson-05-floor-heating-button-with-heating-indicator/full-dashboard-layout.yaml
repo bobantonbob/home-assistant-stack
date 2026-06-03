@@ -1,0 +1,474 @@
+type: panel
+path: home
+title: Home
+icon: mdi:home-assistant
+cards:
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
+    layout:
+      grid-template-columns: |-
+        minmax(0, min(calc(100vw - 460px), calc(100vh - 120px))) minmax(300px,
+        420px)
+      grid-template-areas: |
+        "left right"
+      gap: 12px
+      justify-content: center
+      align-items: start
+      mediaquery:
+        "(max-width: 900px)":
+          grid-template-columns: 1fr
+          grid-template-areas: |
+            "left"
+            "right"
+    cards:
+      - type: picture-elements
+        view_layout:
+          grid-area: left
+        image: /local/home11.png
+        aspect_ratio: 1/1
+        elements:
+          - type: custom:button-card
+            entity: sensor.kompiuter_power
+            name: Компʼютер power
+            icon: mdi:desktop-tower-monitor
+            show_name: false
+            show_state: true
+            state_display: |
+              [[[
+                return Math.round(Number(entity.state)) + ' W';
+              ]]]
+            styles:
+              card:
+                - background: rgba(0,0,0,0.62)
+                - border-radius: 12px
+                - width: 54px
+                - height: 54px
+                - padding: 4px
+                - box-shadow: 0 0 14px rgba(0,255,255,0.55)
+                - border: 1px solid rgba(0,255,255,0.35)
+              icon:
+                - color: cyan
+                - width: 22px
+              state:
+                - color: cyan
+                - font-size: 11px
+                - font-weight: 800
+            style:
+              top: 91%
+              left: 42%
+          - type: custom:button-card
+            entity: switch.wifi_breaker_t_2_switch_1
+            icon: mdi:led-strip-variant
+            show_name: false
+            show_state: true
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            state_display: |
+              [[[
+                return entity.state === 'on' ? 'ON' : 'OFF';
+              ]]]
+            styles:
+              card:
+                - background: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return 'radial-gradient(circle, rgba(255,215,0,0.35), rgba(0,0,0,0.65))';
+                      }
+                      return 'rgba(0,0,0,0.55)';
+                    ]]]
+                - border-radius: 12px
+                - width: 50px
+                - height: 58px
+                - padding: 4px
+                - box-shadow: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '0 0 20px rgba(255,215,0,0.90)';
+                      }
+                      return '0 0 10px rgba(0,255,255,0.35)';
+                    ]]]
+                - border: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '1px solid rgba(255,215,0,0.85)';
+                      }
+                      return '1px solid rgba(0,255,255,0.30)';
+                    ]]]
+              grid:
+                - grid-template-areas: |
+                    "i"
+                    "s"
+                - grid-template-columns: 1fr
+                - grid-template-rows: auto auto
+              icon:
+                - color: |
+                    [[[
+                      return entity.state === 'on' ? '#FFD700' : 'cyan';
+                    ]]]
+                - width: 23px
+                - justify-self: center
+              state:
+                - color: white
+                - font-size: 10px
+                - font-weight: bold
+                - justify-self: center
+            style:
+              top: 92%
+              left: 53%
+              transform: translate(-50%, -50%)
+              z-index: 35
+          - type: custom:button-card
+            style:
+              top: 49%
+              left: 91%
+            entity: switch.wifi_breaker_t_switch_1
+            icon: mdi:led-strip-variant
+            show_name: false
+            show_state: true
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            state_display: |
+              [[[
+                return entity.state === 'on' ? 'ON' : 'OFF';
+              ]]]
+            styles:
+              card:
+                - border-radius: 50%
+                - width: 56px
+                - height: 56px
+                - padding: 4px
+                - background: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return 'radial-gradient(circle, rgba(255,215,0,0.35), rgba(0,0,0,0.65))';
+                      }
+                      return 'rgba(0,0,0,0.45)';
+                    ]]]
+                - box-shadow: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '0 0 24px rgba(255,215,0,0.95)';
+                      }
+                      return '0 0 8px rgba(0,0,0,0.6)';
+                    ]]]     
+                - border: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '2px solid rgba(255,215,0,0.85)';
+                      }
+                      return '1px solid rgba(255,255,255,0.15)';
+                    ]]]   
+              icon:
+                - width: 30px
+                - color: |
+                    [[[
+                      return entity.state === 'on'
+                        ? '#FFD700'
+                        : 'gray';
+                    ]]]       
+              state:
+                - color: white
+                - font-size: 10px
+                - font-weight: bold
+          - type: custom:button-card
+            style:
+              top: 62%
+              left: 76%
+            entity: light.dimmer_kukhnia
+            icon: mdi:lightbulb
+            show_name: false
+            show_state: true
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            state_display: |
+              [[[
+                if (entity.state === 'off') return 'OFF';
+
+                let brightness = entity.attributes.brightness;
+                if (brightness === undefined) return 'ON';
+
+                let percent = Math.round(brightness / 255 * 100);
+                return percent + '%';
+              ]]]
+            styles:
+              card:
+                - border-radius: 50%
+                - width: 56px
+                - height: 56px
+                - padding: 4px
+                - background: |
+                    [[[
+                      if (entity.state === 'on') {
+                        let brightness = entity.attributes.brightness || 255;
+                        let opacity = 0.15 + (brightness / 255) * 0.45;
+                        return `radial-gradient(circle, rgba(255,215,0,${opacity}), rgba(0,0,0,0.65))`;
+                      }
+                      return 'rgba(0,0,0,0.45)';
+                    ]]]
+                - box-shadow: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '0 0 24px rgba(255,215,0,0.95)';
+                      }
+                      return '0 0 8px rgba(0,0,0,0.6)';
+                    ]]]     
+                - border: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '2px solid rgba(255,215,0,0.85)';
+                      }
+                      return '1px solid rgba(255,255,255,0.15)';
+                    ]]]   
+              icon:
+                - width: 30px
+                - color: |
+                    [[[
+                      return entity.state === 'on'
+                        ? '#FFD700'
+                        : 'gray';
+                    ]]]       
+              state:
+                - color: white
+                - font-size: 10px
+                - font-weight: bold
+          - type: custom:button-card
+            style:
+              top: 65%
+              left: 50%
+            entity: media_player.samsung_7_series_60_ue60ks7080
+            icon: mdi:television
+            show_name: false
+            show_state: false
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            styles:
+              card:
+                - background: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return 'radial-gradient(circle, rgba(0,255,255,0.35), rgba(0,0,0,0.65))';
+                      }
+                      return 'rgba(0,0,0,0.45)';
+                    ]]]
+                - border-radius: 50%
+                - width: clamp(42px, 6vw, 60px)
+                - height: clamp(42px, 6vw, 60px)
+                - padding: clamp(2px, 0.7vw, 4px)
+                - box-shadow: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '0 0 clamp(8px, 2vw, 22px) cyan';
+                      }
+                      return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                    ]]]
+                - border: |
+                    [[[
+                      if (entity.state === 'on') {
+                        return '2px solid cyan';
+                      }
+                      return '1px solid rgba(255,255,255,0.15)';
+                    ]]]
+              icon:
+                - width: clamp(20px, 3.4vw, 34px)
+                - color: |
+                    [[[
+                      return entity.state === 'on'
+                        ? 'cyan'
+                        : 'gray';
+                    ]]]
+          - type: image
+            entity: camera.network_video_recorder_channel_3
+            camera_image: camera.network_video_recorder_channel_3
+            camera_view: live
+            tap_action:
+              action: more-info
+            style:
+              left: 85%
+              top: 35%
+              transform: translate(-50%, -50%)
+              width: clamp(60px, 8vw, 80px)
+              border-radius: clamp(8px, 1vw, 14px)
+              overflow: hidden
+              border: 1px solid rgba(0, 229, 255, 0.85)
+              box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+              z-index: 30
+          - type: custom:button-card
+            style:
+              top: 86%
+              left: 57%
+            entity: climate.floor_heating
+            icon: mdi:radiator
+            show_name: false
+            show_state: true
+            tap_action:
+              action: none
+            state_display: |
+              [[[
+                const temp = entity.attributes.current_temperature;
+                return temp ? temp + '°C' : entity.state;
+              ]]]
+            styles:
+              card:
+                - background: |
+                    [[[
+                      if (entity.attributes.hvac_action === 'heating') {
+                        return 'rgba(255,165,0,0.65)';
+                      }
+                      return 'rgba(0,0,0,0.5)';
+                    ]]]  
+                - border-radius: clamp(10px, 2vw, 18px)
+                - width: clamp(42px, 6vw, 60px)
+                - height: clamp(42px, 6vw, 60px)
+                - padding: clamp(2px, 0.7vw, 4px)
+                - box-shadow: |
+                    [[[
+                      if (entity.attributes.hvac_action === 'heating') {
+                        return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
+                      }
+                      return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                    ]]]  
+              icon:
+                - width: clamp(18px, 3vw, 30px)
+                - color: |
+                    [[[
+                      const action = entity.attributes.hvac_action;
+                      const state = entity.state;
+                      if (action === 'heating' || action === 'heat' || action === 'running') {
+                        return '#ff0000';
+                      }
+                      if (state !== 'off') {
+                        return 'orange';
+                      }
+                      return 'gray';
+                    ]]]  
+              state:
+                - color: white
+                - font-size: clamp(9px, 1.8vw, 16px)
+                - font-weight: bold
+          - type: custom:button-card
+            entity: climate.floor_heating
+            icon: mdi:circle
+            show_name: false
+            show_state: false
+            tap_action:
+              action: none
+            styles:
+              card:
+                - background: none
+                - box-shadow: none
+                - width: clamp(6px, 1vw, 10px)
+                - height: clamp(6px, 1vw, 10px)
+              icon:
+                - width: clamp(8px, 1.5vw, 14px)
+                - color: |
+                    [[[
+                      const current = Number(entity.attributes.current_temperature);
+                      const target = Number(entity.attributes.temperature);
+
+                      if (entity.state !== 'off' && target > current) {
+                        return '#ff0000';
+                      }
+
+                      return 'transparent';
+                    ]]]    
+            style:
+              top: 84%
+              left: 59%
+        card_mod:
+          style: |
+            ha-card {
+              max-height: calc(100vh - 120px);
+              overflow-y: auto;
+              width: 100%;
+              box-sizing: border-box;
+              padding: 6px !important;
+            }
+            #states {
+              padding: 0 !important;
+            }
+            #states > * {
+              min-height: 42px !important;
+              margin: 0 !important;
+              padding-top: 2px !important;
+              padding-bottom: 2px !important;
+            }
+            hui-divider-row {
+              margin: 4px 0 !important;
+            }
+            ha-icon {
+              --mdc-icon-size: 22px;
+            }
+            .state {
+              font-size: 14px !important;
+            }
+            .info,
+            .name,
+            .text-content {
+              font-size: 14px !important;
+              line-height: 1.1 !important;
+            }
+            @media (max-width: 900px) {
+              ha-card {
+                max-height: none;
+                overflow-y: visible;
+                padding: 4px !important;
+              }
+              #states > * {
+                min-height: 30px !important;
+                height: auto !important;
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
+              }
+              ha-icon {
+                --mdc-icon-size: 18px;
+              }
+              .state {
+                font-size: 12px !important;
+              }
+              .info,
+              .name,
+              .text-content {
+                font-size: 12px !important;
+                line-height: 1 !important;
+              }
+              hui-divider-row {
+                margin: 2px 0 !important;
+              }
+            }
+            @media (max-width: 600px) {
+              ha-card {
+                padding: 2px !important;
+              }
+              #states > * {
+                min-height: 26px !important;
+              }
+              ha-icon {
+                --mdc-icon-size: 16px;
+              }
+              .state {
+                font-size: 11px !important;
+              }
+              .info,
+              .name,
+              .text-content {
+                font-size: 11px !important;
+              }
+            }
+    grid_options:
+      rows: auto
+      columns: full
+    card_mod:
+      style: |
+        @media (max-width: 900px) {
+          #root {
+            grid-template-columns: 1fr !important;
+          }
+        }
