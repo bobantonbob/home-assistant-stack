@@ -1,0 +1,87 @@
+  - type: custom:button-card
+    style:
+      top: 86%
+      left: 57%
+    entity: climate.floor_heating
+    icon: mdi:radiator
+    show_name: false
+    show_state: true
+    tap_action:
+      action: none
+    state_display: |
+      [[[
+        const temp = entity.attributes.current_temperature;
+        return temp ? temp + '°C' : entity.state;
+      ]]]
+    styles:
+      card:
+        - background: |
+            [[[
+              if (entity.attributes.hvac_action === 'heating') {
+                return 'rgba(255,165,0,0.65)';
+              }
+
+              return 'rgba(0,0,0,0.5)';
+            ]]]  
+        - border-radius: clamp(10px, 2vw, 18px)
+        - width: clamp(42px, 6vw, 60px)
+        - height: clamp(42px, 6vw, 60px)
+        - padding: clamp(2px, 0.7vw, 4px)
+        - box-shadow: |
+            [[[
+              if (entity.attributes.hvac_action === 'heating') {
+                return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
+              }
+
+              return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+            ]]]  
+      icon:
+        - width: clamp(18px, 3vw, 30px)
+        - color: |
+            [[[
+              const action = entity.attributes.hvac_action;
+              const state = entity.state;
+
+              if (action === 'heating' || action === 'heat' || action === 'running') {
+                return '#ff0000';
+              }
+
+              if (state !== 'off') {
+                return 'orange';
+              }
+
+              return 'gray';
+            ]]]  
+      state:
+        - color: white
+        - font-size: clamp(9px, 1.8vw, 16px)
+        - font-weight: bold
+  - type: custom:button-card
+    entity: climate.floor_heating
+    icon: mdi:circle
+    show_name: false
+    show_state: false
+    tap_action:
+      action: none
+    styles:
+      card:
+        - background: none
+        - box-shadow: none
+        - width: clamp(6px, 1vw, 10px)
+        - height: clamp(6px, 1vw, 10px)
+      icon:
+        - width: clamp(8px, 1.5vw, 14px)
+        - color: |
+            [[[
+              const current = Number(entity.attributes.current_temperature);
+              const target = Number(entity.attributes.temperature);
+
+              if (entity.state !== 'off' && target > current) {
+                return '#ff0000';
+              }
+
+              return 'transparent';
+            ]]]    
+    style:
+      top: 84%
+      left: 59%
