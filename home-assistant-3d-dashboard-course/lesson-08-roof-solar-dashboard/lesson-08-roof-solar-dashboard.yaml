@@ -1,0 +1,72 @@
+type: picture-elements
+image: /local/roof.png
+elements:
+  - type: custom:button-card
+    entity: sensor.today_sun
+    name: СОНЦЕ СЬОГОДНІ
+    icon: mdi:white-balance-sunny
+    show_name: true
+    show_state: true
+    show_icon: true
+    tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        const v = Number(entity.state);
+        if (isNaN(v)) return '0 kWh';
+        return v.toFixed(1) + ' kWh';
+      ]]]
+    style:
+      left: 50%
+      top: 7%
+      transform: translate(-50%, -50%)
+      width: clamp(140px, 22vw, 230px)
+    extra_styles: |
+      @keyframes sunTotalPulse {
+        0% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0.65),
+            0 0 12px rgba(255, 210, 70, 0.35);
+        }
+        50% {
+          box-shadow:
+            0 0 0 9px rgba(255, 210, 70, 0.08),
+            0 0 26px rgba(255, 210, 70, 0.80);
+        }
+        100% {
+          box-shadow:
+            0 0 0 0 rgba(255, 210, 70, 0),
+            0 0 12px rgba(255, 210, 70, 0.35);
+        }
+      }
+    styles:
+      grid:
+        - grid-template-areas: "\"i n\" \"i s\""
+        - grid-template-columns: min-content 1fr
+        - grid-template-rows: min-content min-content
+        - column-gap: clamp(6px, 1vw, 10px)
+      card:
+        - background: rgba(58, 42, 5, 0.76)
+        - border-radius: clamp(12px, 1.2vw, 18px)
+        - padding: clamp(6px, 1vw, 10px)
+        - border: 1px solid rgba(255, 210, 70, 0.95)
+        - animation: |
+            [[[
+              return Number(entity.state) > 0.1
+                ? 'sunTotalPulse 2s ease-in-out infinite'
+                : 'none';
+            ]]]
+      icon:
+        - color: "#ffd54f"
+        - width: clamp(20px, 2.6vw, 32px)
+      name:
+        - color: white
+        - font-size: clamp(9px, 1.1vw, 13px)
+        - font-weight: 700
+        - letter-spacing: 0.4px
+        - justify-self: start
+      state:
+        - color: "#ffd54f"
+        - font-size: clamp(14px, 1.8vw, 22px)
+        - font-weight: 800
+        - justify-self: start
