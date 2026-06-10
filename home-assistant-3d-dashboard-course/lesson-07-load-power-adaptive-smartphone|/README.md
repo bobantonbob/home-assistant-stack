@@ -128,4 +128,6 @@ lesson-07-load-power-adaptive-smartphone
 - `top` / `left`;
 - усі `clamp()` значення.
 
+
+Відио https://youtu.be/L1NtV5OnMRc
 Саме за рахунок них ми робимо повну адаптацію під маленькі екрани.
