@@ -6,6 +6,22 @@
 
 ---
 
+## Готовий приклад дашборду
+
+Ось так виглядає загальний 3D Dashboard, який ми поступово збираємо в цьому курсі:
+
+![Home Assistant 3D Dashboard](./dashboard_full.png)
+
+---
+
+## YouTube playlist
+
+Всі заняття курсу на YouTube:
+
+[Перейти до плейлиста Home Assistant 3D Dashboard Course](https://www.youtube.com/playlist?list=PLWo_AYhwCKTYjH7dXVjOddqfM8Hl3zIvo)
+
+---
+
 ## Головна ідея курсу
 
 Ми беремо 3D-зображення квартири або будинку і поступово додаємо на нього реальні елементи Home Assistant:
@@ -141,8 +157,10 @@ home-assistant-3d-dashboard-course/
 ├── lesson-03_led_on_off_light_dimmer_button/
 ├── lesson-04-active-tv-button-live-camera/
 ├── lesson-05-floor-heating-button-with-heating-indicator/
+├── lesson-07-load-power-adaptive-smartphone/
 ├── lesson6_car_battery_dashboard/
-└── lesson-07-load-power-adaptive-smartphone/
+├── README.md
+└── dashboard_full.png
 ```
 
 ---
@@ -211,3 +229,6 @@ Home Assistant → Developer Tools → States
 
 GitHub:  
 https://github.com/bobantonbob/home-assistant-stack
+
+YouTube playlist:  
+https://www.youtube.com/playlist?list=PLWo_AYhwCKTYjH7dXVjOddqfM8Hl3zIvo
