@@ -1,0 +1,95 @@
+      - type: custom:button-card
+        entity: sensor.deye_load_power
+        name: LOAD
+        icon: mdi:home-lightning-bolt
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 76%
+          top: 67%
+          transform: translate(-50%, -50%)
+          width: clamp(78px, 9vw, 122px)
+        extra_styles: |
+          @keyframes loadPulseOrange {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 152, 0, 0.60),
+                0 0 10px rgba(255, 152, 0, 0.25);
+            }
+            50% {
+              box-shadow:
+                0 0 0 8px rgba(255, 152, 0, 0.08),
+                0 0 24px rgba(255, 152, 0, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 152, 0, 0),
+                0 0 10px rgba(255, 152, 0, 0.25);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.8vw, 9px)
+          card:
+            - background: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return 'rgba(68, 38, 8, 0.72)';
+                  return 'rgba(0, 0, 0, 0.58)';
+                ]]]
+            - border-radius: clamp(12px, 1vw, 16px)
+            - padding: clamp(6px, 0.9vw, 10px)
+            - border: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return '1px solid rgba(255, 193, 7, 0.95)';
+                  return '1px solid rgba(255,255,255,0.16)';
+                ]]]
+            - animation: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return 'loadPulseOrange 1.8s ease-in-out infinite';
+                  return 'none';
+                ]]]
+          icon:
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return '#ffc107';
+                  return '#e8f0ff';
+                ]]]
+            - width: clamp(18px, 2.3vw, 28px)
+          name:
+            - color: white
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return '#ffd86b';
+                  return 'white';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
