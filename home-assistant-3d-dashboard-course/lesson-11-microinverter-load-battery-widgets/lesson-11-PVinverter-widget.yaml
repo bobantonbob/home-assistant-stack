@@ -1,0 +1,50 @@
+      - type: custom:button-card
+        entity: sensor.deye_today_production
+        name: DEYE / СТРІНГИ
+        icon: mdi:solar-power-variant
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 28%
+          top: 17%
+          transform: translate(-50%, -50%)
+          width: clamp(118px, 17vw, 190px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.8vw, 9px)
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 15px)
+            - padding: clamp(5px, 0.8vw, 9px)
+            - border: 1px solid rgba(255, 210, 70, 0.75)
+            - box-shadow: |
+                [[[
+                  return Number(entity.state) > 0.1
+                    ? '0 0 14px rgba(255, 210, 70, 0.45)'
+                    : '0 0 8px rgba(255,255,255,0.10)';
+                ]]]
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(17px, 2.1vw, 26px)
+          name:
+            - color: white
+            - font-size: clamp(8px, 1vw, 12px)
+            - font-weight: 600
+            - justify-self: start
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(11px, 1.4vw, 17px)
+            - font-weight: 800
+            - justify-self: start
