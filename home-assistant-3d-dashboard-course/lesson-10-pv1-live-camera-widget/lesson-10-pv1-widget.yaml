@@ -1,0 +1,122 @@
+      - type: custom:button-card
+        entity: sensor.inverter_pv1_power
+        name: PV1
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 9%
+          top: 25%
+          transform: translate(-50%, -50%)
+          width: clamp(60px, 7.5vw, 92px)
+        extra_styles: |
+          @keyframes edgePvPulseYellow1 {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.7vw, 8px)
+            - position: relative
+            - z-index: 3
+          card:
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: none
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'edgePvPulseYellow1 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-6px"
+              - border-radius: clamp(13px, 1.2vw, 18px)
+              - padding: 3px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 450;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10 ? '#ffd54f' : '#6ec6ff';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+          name:
+            - position: relative
+            - z-index: 3
+            - color: white
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10 ? '#ffd54f' : 'white';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
