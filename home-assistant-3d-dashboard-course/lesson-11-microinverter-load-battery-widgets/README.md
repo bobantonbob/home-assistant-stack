@@ -281,7 +281,7 @@ sensor.deye_battery_power
 - сенсори під вашу систему.
 
 ---
-
+Посилання на відио заняття 11: https://youtu.be/6Zw_zExtnrY
 ## Підсумок
 
 У цьому занятті ми додали три важливі енергетичні блоки для Home Assistant 3D Dashboard:
