@@ -1,0 +1,80 @@
+type: custom:button-card
+entity: sensor.live_clock_seconds
+show_icon: true
+show_name: true
+show_state: true
+icon: mdi:clock-outline
+name: |
+  [[[
+    const days = [
+      'Неділя',
+      'Понеділок',
+      'Вівторок',
+      'Середа',
+      'Четвер',
+      'Пʼятниця',
+      'Субота'
+    ];
+
+    const months = [
+      'січня',
+      'лютого',
+      'березня',
+      'квітня',
+      'травня',
+      'червня',
+      'липня',
+      'серпня',
+      'вересня',
+      'жовтня',
+      'листопада',
+      'грудня'
+    ];
+
+    const now = new Date();
+    const dayName = days[now.getDay()];
+    const day = now.getDate();
+    const month = months[now.getMonth()];
+
+    return `${dayName}, ${day} ${month}`;
+  ]]]
+state_display: |
+  [[[
+    return entity.state;
+  ]]]
+tap_action:
+  action: none
+style:
+  left: 18%
+  top: 7%
+  transform: translate(-50%, -50%)
+  width: clamp(145px, 18vw, 240px)
+  z-index: 20
+styles:
+  grid:
+    - grid-template-areas: '"i s" "i n"'
+    - grid-template-columns: min-content 1fr
+    - grid-template-rows: min-content min-content
+    - column-gap: clamp(6px, 0.8vw, 10px)
+  card:
+    - background: rgba(0, 0, 0, 0.62)
+    - border-radius: clamp(10px, 1vw, 16px)
+    - padding: clamp(5px, 0.8vw, 9px)
+    - border: 1px solid rgba(255,255,255,0.18)
+    - box-shadow: 0 0 12px rgba(0,0,0,0.45)
+  icon:
+    - color: '#ffd54f'
+    - width: clamp(18px, 2.2vw, 28px)
+  state:
+    - color: '#ffd54f'
+    - font-size: clamp(14px, 1.8vw, 24px)
+    - font-weight: 900
+    - justify-self: start
+    - line-height: 1
+    - font-variant-numeric: tabular-nums
+  name:
+    - color: white
+    - font-size: clamp(8px, 1vw, 13px)
+    - font-weight: 600
+    - justify-self: start
+    - white-space: nowrap

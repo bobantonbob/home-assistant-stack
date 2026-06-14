@@ -1,0 +1,133 @@
+type: custom:button-card
+entity: sensor.total_solar_power
+name: ВСЬОГО PV
+icon: mdi:solar-power-variant
+show_name: true
+show_state: true
+show_icon: true
+tap_action:
+  action: more-info
+custom_fields:
+  pv_border: ""
+state_display: |
+  [[[
+    const v = Number(entity.state);
+    if (isNaN(v)) return '0 W';
+
+    if (v >= 1000) {
+      return (v / 1000).toFixed(2) + ' kW';
+    }
+
+    return Math.round(v) + ' W';
+  ]]]
+style:
+  left: 47%
+  top: 66%
+  transform: translate(-50%, -50%)
+  width: clamp(120px, 16vw, 210px)
+  z-index: 25
+extra_styles: |
+  @keyframes totalPvPulse {
+    0% {
+      box-shadow:
+        0 0 0 0 rgba(255, 213, 79, 0.55),
+        0 0 12px rgba(255, 213, 79, 0.35);
+    }
+    50% {
+      box-shadow:
+        0 0 0 10px rgba(255, 213, 79, 0.08),
+        0 0 28px rgba(255, 213, 79, 0.85);
+    }
+    100% {
+      box-shadow:
+        0 0 0 0 rgba(255, 213, 79, 0),
+        0 0 12px rgba(255, 213, 79, 0.35);
+    }
+  }
+styles:
+  grid:
+    - grid-template-areas: '"i n" "i s"'
+    - grid-template-columns: min-content 1fr
+    - grid-template-rows: min-content min-content
+    - column-gap: clamp(6px, 0.9vw, 10px)
+    - position: relative
+    - z-index: 3
+  card:
+    - position: relative
+    - overflow: hidden
+    - background: |
+        [[[
+          const v = Number(entity.state);
+          if (v > 100) return 'rgba(48, 36, 4, 0.76)';
+          return 'rgba(0, 0, 0, 0.58)';
+        ]]]
+    - border-radius: clamp(13px, 1.2vw, 18px)
+    - padding: clamp(7px, 1vw, 12px)
+    - border: none
+    - animation: |
+        [[[
+          const v = Number(entity.state);
+          if (v > 100) return 'totalPvPulse 1.8s ease-in-out infinite';
+          return 'none';
+        ]]]
+  custom_fields:
+    pv_border:
+      - position: absolute
+      - inset: "-6px"
+      - border-radius: clamp(13px, 1.2vw, 18px)
+      - padding: 3px
+      - z-index: 1
+      - pointer-events: none
+      - background: |
+          [[[
+            const v = Number(entity.state);
+            const max = 8400;
+            const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+            return `
+              conic-gradient(
+                from -90deg,
+                rgba(255, 213, 79, 1) 0%,
+                rgba(255, 213, 79, 1) ${percent}%,
+                rgba(255, 255, 255, 0.14) ${percent}%,
+                rgba(255, 255, 255, 0.14) 100%
+              )
+            `;
+          ]]]
+      - "-webkit-mask": >-
+          linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+          0)
+      - "-webkit-mask-composite": xor
+      - mask-composite: exclude
+  icon:
+    - position: relative
+    - z-index: 3
+    - color: |
+        [[[
+          const v = Number(entity.state);
+          if (v > 100) return '#ffd54f';
+          return '#8fdcff';
+        ]]]
+    - width: clamp(22px, 2.8vw, 36px)
+  name:
+    - position: relative
+    - z-index: 3
+    - color: white
+    - font-size: clamp(10px, 1.15vw, 15px)
+    - font-weight: 800
+    - letter-spacing: 0.4px
+    - justify-self: start
+    - align-self: end
+  state:
+    - position: relative
+    - z-index: 3
+    - color: |
+        [[[
+          const v = Number(entity.state);
+          if (v > 100) return '#ffd54f';
+          return 'white';
+        ]]]
+    - font-size: clamp(15px, 2vw, 28px)
+    - font-weight: 900
+    - justify-self: start
+    - align-self: start
