@@ -1,0 +1,209 @@
+      - type: custom:button-card
+        entity: sensor.deye_battery
+        name: |
+          [[[
+            const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+            if (p < -80) return 'ЗАРЯД';
+            if (p > 80) return 'РОЗРЯД';
+
+            return 'АКБ';
+          ]]]
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          battery_border: ""
+        icon: |
+          [[[
+            const soc = Number(entity.state);
+            const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+            if (isNaN(soc)) return 'mdi:battery-unknown';
+
+            if (p < -80) return 'mdi:battery-charging';
+
+            if (soc >= 95) return 'mdi:battery';
+            if (soc >= 85) return 'mdi:battery-90';
+            if (soc >= 75) return 'mdi:battery-80';
+            if (soc >= 55) return 'mdi:battery-60';
+            if (soc >= 35) return 'mdi:battery-40';
+            if (soc >= 15) return 'mdi:battery-20';
+
+            return 'mdi:battery-outline';
+          ]]]
+        state_display: |
+          [[[
+            const soc = Number(entity.state);
+
+            if (isNaN(soc)) return '—';
+
+            return Math.round(soc) + '%';
+          ]]]
+        style:
+          left: 76%
+          top: 76%
+          transform: translate(-50%, -50%)
+          width: clamp(76px, 9vw, 118px)
+          z-index: 20
+        extra_styles: |
+          @keyframes batteryPulseGreen {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(76, 175, 80, 0.55),
+                0 0 10px rgba(76, 175, 80, 0.25);
+            }
+            50% {
+              box-shadow:
+                0 0 0 8px rgba(76, 175, 80, 0.08),
+                0 0 24px rgba(76, 175, 80, 0.80);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(76, 175, 80, 0),
+                0 0 10px rgba(76, 175, 80, 0.25);
+            }
+          }
+
+          @keyframes batteryPulseBlue {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(33, 150, 243, 0.55),
+                0 0 10px rgba(33, 150, 243, 0.25);
+            }
+            50% {
+              box-shadow:
+                0 0 0 8px rgba(33, 150, 243, 0.08),
+                0 0 24px rgba(33, 150, 243, 0.80);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(33, 150, 243, 0),
+                0 0 10px rgba(33, 150, 243, 0.25);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.8vw, 9px)
+            - position: relative
+            - z-index: 3
+          card:
+            - position: relative
+            - overflow: visible
+            - background: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return 'rgba(18, 58, 28, 0.78)';
+                  if (p > 80) return 'rgba(14, 36, 68, 0.78)';
+
+                  return 'rgba(0, 0, 0, 0.58)';
+                ]]]
+            - border-radius: clamp(12px, 1vw, 16px)
+            - padding: clamp(6px, 0.9vw, 10px)
+            - border: none
+            - animation: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return 'batteryPulseGreen 1.8s ease-in-out infinite';
+                  if (p > 80) return 'batteryPulseBlue 1.8s ease-in-out infinite';
+
+                  return 'none';
+                ]]]
+          custom_fields:
+            battery_border:
+              - position: absolute
+              - inset: "-6px"
+              - border-radius: clamp(15px, 1.3vw, 20px)
+              - padding: 3px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const soc = Number(entity.state);
+                    const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                    if (isNaN(soc)) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(255,255,255,0.14) 0%,
+                          rgba(255,255,255,0.14) 100%
+                        )
+                      `;
+                    }
+
+                    const percent = Math.min(Math.max(soc, 0), 100);
+
+                    let color = 'rgba(255, 255, 255, 0.9)';
+
+                    if (p < -80) {
+                      color = 'rgba(76, 175, 80, 1)';
+                    } else if (p > 80) {
+                      color = 'rgba(33, 150, 243, 1)';
+                    } else if (soc >= 70) {
+                      color = 'rgba(76, 175, 80, 1)';
+                    } else if (soc >= 35) {
+                      color = 'rgba(255, 213, 79, 1)';
+                    } else {
+                      color = 'rgba(244, 67, 54, 1)';
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        ${color} 0%,
+                        ${color} ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return '#66bb6a';
+                  if (p > 80) return '#42a5f5';
+
+                  return '#e8f0ff';
+                ]]]
+            - width: clamp(18px, 2.3vw, 28px)
+          name:
+            - position: relative
+            - z-index: 3
+            - color: white
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return '#8df59a';
+                  if (p > 80) return '#78c3ff';
+
+                  return 'white';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
