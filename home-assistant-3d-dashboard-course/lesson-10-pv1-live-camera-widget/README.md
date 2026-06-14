@@ -236,7 +236,7 @@ camera.network_video_recorder_channel_1
 - дію при натисканні.
 
 ---
-
+Посилання на відио заняття 10: https://youtu.be/UjfNVzE2q70
 ## Підсумок
 
 У цьому занятті ми додали два нові блоки для Home Assistant 3D Dashboard:
