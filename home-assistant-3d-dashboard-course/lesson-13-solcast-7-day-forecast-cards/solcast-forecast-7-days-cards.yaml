@@ -1,0 +1,309 @@
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_today
+        name: СЬОГОДНІ
+        icon: mdi:white-balance-sunny
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 11%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(45, 32, 4, 0.72)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255, 210, 70, 0.85)
+            - box-shadow: 0 0 12px rgba(255, 210, 70, 0.35)
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_tomorrow
+        name: ЗАВТРА
+        icon: mdi:weather-sunny
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 23.3%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255, 210, 70, 0.55)
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_3
+        name: ДЕНЬ 3
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 36.6%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_4
+        name: ДЕНЬ 4
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 50%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_5
+        name: ДЕНЬ 5
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 63.3%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_6
+        name: ДЕНЬ 6
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 76.6%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_7
+        name: ДЕНЬ 7
+        icon: mdi:calendar-week
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 90%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
