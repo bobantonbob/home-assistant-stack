@@ -1,0 +1,16 @@
+      - name: Sun Day Progress
+        unique_id: sun_day_progress
+        unit_of_measurement: "%"
+        state: >
+          {% set now_ts = as_timestamp(now()) %}
+          {% set next_rising = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+          {% set next_setting = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+
+          {% if is_state('sun.sun', 'above_horizon') %}
+            {% set sunrise = next_rising - 86400 %}
+            {% set sunset = next_setting %}
+            {% set progress = ((now_ts - sunrise) / (sunset - sunrise)) * 100 %}
+            {{ [0, [progress, 100] | min] | max | round(1) }}
+          {% else %}
+            0
+          {% endif %}
