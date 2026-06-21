@@ -308,5 +308,5 @@ sensor.solcast_pv_forecast_forecast_day_7
 ```text
 solcast-forecast-7-days-cards.yaml
 ```
-
+Відио заняття тут: https://youtu.be/hxcBTP9K1nU
 Просто копіюйте готовий код з GitHub і замінюйте сутності під свій Home Assistant, якщо у вас вони називаються інакше.
