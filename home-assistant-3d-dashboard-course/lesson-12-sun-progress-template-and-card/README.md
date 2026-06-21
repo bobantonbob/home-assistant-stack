@@ -225,7 +225,7 @@ Sun Day Progress Widget
 ## 10. Результат
 
 У результаті отримуємо живий елемент для Home Assistant Dashboard:
-
+Відио заняття: https://youtu.be/aLAcCEQ9Dn4
 ```text
 сонце рухається по лінії залежно від прогресу світлового дня
 ```
