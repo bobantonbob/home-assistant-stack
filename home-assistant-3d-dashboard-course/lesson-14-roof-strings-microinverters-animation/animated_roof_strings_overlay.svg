@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1500" viewBox="0 0 1500 1500">
+  <defs>
+    <filter id="glowYellow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .base { fill:none; stroke:rgba(255,208,64,.28); stroke-width:12; stroke-linecap:round; stroke-linejoin:round; filter:url(#glowYellow); }
+      .dash { fill:none; stroke:#ffd84d; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:10 22; filter:url(#glowYellow); animation: flow 1.4s linear infinite; }
+      .node { fill:#ffd84d; filter:url(#glowYellow); animation:pulse 1.8s ease-in-out infinite; }
+      @keyframes flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -64; } }
+      @keyframes pulse { 0%,100% { opacity:.75; r:7; } 50% { opacity:1; r:10; } }
+    </style>
+  </defs>
+
+  <!-- upper string: top 5 panels in center -->
+  <path class="base" d="M 448 378 L 448 500 L 448 690 L 448 870 L 980 870 L 980 942 L 1065 942"/>
+  <path class="dash" d="M 448 378 L 448 500 L 448 690 L 448 870 L 980 870 L 980 942 L 1065 942"/>
+
+  <!-- lower string: bottom 5 panels in center -->
+  <path class="base" d="M 448 594 L 448 690 L 448 870 L 980 870 L 980 942 L 1065 942"/>
+  <path class="dash" d="M 448 594 L 448 690 L 448 870 L 980 870 L 980 942 L 1065 942"/>
+
+  <circle class="node" cx="448" cy="378" r="7"/>
+  <circle class="node" cx="448" cy="594" r="7"/>
+  <circle class="node" cx="980" cy="870" r="7"/>
+  <circle class="node" cx="1065" cy="942" r="9"/>
+</svg>

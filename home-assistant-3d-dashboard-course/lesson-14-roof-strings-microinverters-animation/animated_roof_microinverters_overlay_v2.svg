@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1500" viewBox="0 0 1500 1500">
+  <defs>
+    <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .base { fill:none; stroke:rgba(80,220,255,.24); stroke-width:12; stroke-linecap:round; stroke-linejoin:round; filter:url(#glowCyan); }
+      .dash { fill:none; stroke:#56d9ff; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:10 22; filter:url(#glowCyan); animation: flow 1.35s linear infinite; }
+      .node { fill:#56d9ff; filter:url(#glowCyan); animation:pulse 1.7s ease-in-out infinite; }
+      @keyframes flow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -64; } }
+      @keyframes pulse { 0%,100% { opacity:.72; r:7; } 50% { opacity:1; r:10; } }
+    </style>
+  </defs>
+
+  <!-- left vertical microinverter group -->
+  <path class="base" d="M 108 640 L 108 835 L 260 835 L 260 870 L 980 870 L 980 942 L 1065 942"/>
+  <path class="dash" d="M 108 640 L 108 835 L 260 835 L 260 870 L 980 870 L 980 942 L 1065 942"/>
+
+  <!-- right top microinverter group -->
+  <path class="base" d="M 1120 400 L 1120 515 L 1006 515 L 1006 942 L 1065 942"/>
+  <path class="dash" d="M 1120 400 L 1120 515 L 1006 515 L 1006 942 L 1065 942"/>
+
+  <!-- single center microinverter panel -->
+  <path class="base" d="M 885 655 L 885 870 L 980 870 L 980 942 L 1065 942"/>
+  <path class="dash" d="M 885 655 L 885 870 L 980 870 L 980 942 L 1065 942"/>
+
+  <circle class="node" cx="108" cy="640" r="7"/>
+  <circle class="node" cx="1120" cy="400" r="7"/>
+  <circle class="node" cx="885" cy="655" r="7"/>
+  <circle class="node" cx="980" cy="870" r="7"/>
+  <circle class="node" cx="1065" cy="942" r="9"/>
+</svg>
