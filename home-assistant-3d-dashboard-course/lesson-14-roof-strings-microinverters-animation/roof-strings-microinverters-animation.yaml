@@ -1,0 +1,32 @@
+      - type: conditional
+        conditions:
+          - condition: numeric_state
+            entity: sensor.sun_day_progress
+            above: 0
+            below: 100.1
+        elements:
+          - type: image
+            image: /local/animated_roof_strings_overlay.svg
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              transform: translate(-50%, -50%)
+              pointer-events: none
+      - type: conditional
+        conditions:
+          - condition: numeric_state
+            entity: sensor.sun_day_progress
+            above: 0
+            below: 100.1
+          - entity: switch.sonoff4_ha_sonoff_1000066f8f_1
+            state: "on"
+        elements:
+          - type: image
+            image: /local/animated_roof_microinverters_overlay_v2.svg
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              transform: translate(-50%, -50%)
+              pointer-events: none
