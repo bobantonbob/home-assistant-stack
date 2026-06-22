@@ -195,7 +195,7 @@ lesson-14-roof-strings-microinverters-animation/
 - у результаті отримуємо **живий 3D Dashboard у Home Assistant**, який реагує на реальні стани системи.
 
 ---
-
+Посилання на відио зання: https://youtu.be/GHcJWlTnLrk
 ## Conclusion
 
 Це заняття показує, як зробити дашборд не просто красивим, а ще й **інформативним**.
