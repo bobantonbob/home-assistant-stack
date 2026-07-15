@@ -1,0 +1,5818 @@
+# =============================================================================
+# ОСНОВНИЙ 3D DASHBOARD HOME ASSISTANT
+# Авторський повний код дашборду
+#
+# Це мій основний робочий дашборд Home Assistant, який збирався протягом
+# усього курсу. У файлі вже об'єднані всі основні картки, елементи керування,
+# анімації, камери, сонячна генерація, Tesla, клімат, освітлення, маркіза,
+# прогноз Solcast та інші блоки.
+#
+# АДАПТАЦІЯ:
+# - комп'ютери та великі екрани;
+# - планшети;
+# - смартфони.
+#
+# ВАЖЛИВО:
+# - це готовий приклад мого особистого дашборду;
+# - замініть entity_id на власні сутності;
+# - замініть локальні зображення та SVG-файли у /local/;
+# - за потреби змініть координати елементів під власний 3D-план;
+# - код надається як є для самостійної адаптації.
+#
+# Основні залежності:
+# - custom:layout-card
+# - custom:grid-layout
+# - custom:button-card
+# - card-mod
+# =============================================================================
+
+type: custom:layout-card
+layout_type: custom:grid-layout
+layout:
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)
+  grid-template-areas: |
+    "apartment roof"
+  gap: clamp(6px, 1vw, 12px)
+  justify-content: center
+  align-items: start
+  mediaquery:
+    "(max-width: 900px)":
+      grid-template-columns: 1fr
+      grid-template-areas: |
+        "apartment"
+        "roof"
+      gap: 4px
+cards:
+  - type: picture-elements
+    view_layout:
+      grid-area: roof
+    image:
+      media_content_id: /local/roof.png
+    card_mod:
+      style: |
+        ha-card {
+          width: min(100%, calc(100dvh - 115px));
+          height: min(100%, calc(100dvh - 115px));
+          max-width: 100%;
+          margin: 0 auto;
+          overflow: hidden;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        @media (max-width: 900px) {
+          ha-card {
+            width: min(100vw, calc((100dvh - 130px) / 2));
+            height: min(100vw, calc((100dvh - 130px) / 2));
+          }
+        }
+    elements:
+      - type: custom:button-card
+        entity: sensor.pidval_temperature
+        show_icon: false
+        show_name: false
+        show_state: false
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        custom_fields:
+          temp: |
+            [[[
+              const t = states['sensor.pidval_temperature'];
+              const value = t && !['unknown','unavailable'].includes(t.state)
+                ? Math.round(Number(t.state)) + '°'
+                : '--°';
+
+              return `
+                <div class="smoke-temp-wrap">
+                  <div class="temp-value">${value}</div>
+                </div>
+              `;
+            ]]]
+        styles:
+          card:
+            - width: clamp(42px, 5vw, 56px)
+            - height: clamp(42px, 5vw, 56px)
+            - border-radius: 50%
+            - padding: 0
+            - box-sizing: border-box
+            - overflow: hidden
+            - background: |
+                [[[
+                  const smoke = states['binary_sensor.pidval_dim_smoke']?.state === 'on';
+
+                  if (smoke) {
+                    return 'radial-gradient(circle, rgba(255,0,0,0.85), rgba(80,0,0,0.90))';
+                  }
+
+                  return 'radial-gradient(circle, rgba(0,0,0,0.62), rgba(0,0,0,0.38))';
+                ]]]
+            - border: |
+                [[[
+                  const smoke = states['binary_sensor.pidval_dim_smoke']?.state === 'on';
+
+                  if (smoke) {
+                    return '2px solid rgba(255,0,0,0.95)';
+                  }
+
+                  return '1px solid rgba(0,229,255,0.55)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  const smoke = states['binary_sensor.pidval_dim_smoke']?.state === 'on';
+
+                  if (smoke) {
+                    return '0 0 22px rgba(255,0,0,0.95), inset 0 0 16px rgba(255,80,80,0.55)';
+                  }
+
+                  return '0 0 14px rgba(0,229,255,0.40), inset 0 0 12px rgba(0,229,255,0.16)';
+                ]]]
+            - animation: |
+                [[[
+                  const smoke = states['binary_sensor.pidval_dim_smoke']?.state === 'on';
+                  return smoke ? 'smokePulse 1s infinite' : 'none';
+                ]]]                
+          grid:
+            - grid-template-areas: "\"temp\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: 1fr
+          custom_fields:
+            temp:
+              - align-self: center
+              - justify-self: center
+        extra_styles: |
+          .smoke-temp-wrap {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+          }
+
+          .temp-value {
+            font-size: clamp(12px, 1.5vw, 17px);
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.85);
+          }
+
+          .temp-label {
+            margin-top: 4px;
+            font-size: clamp(6px, 0.75vw, 9px);
+            font-weight: 800;
+            color: rgba(255,255,255,0.75);
+            letter-spacing: 0.5px;
+          }
+
+          @keyframes smokePulse {
+            0% {
+              box-shadow: 0 0 14px rgba(255,0,0,0.65), inset 0 0 12px rgba(255,0,0,0.45);
+            }
+            50% {
+              box-shadow: 0 0 30px rgba(255,0,0,1), inset 0 0 22px rgba(255,80,80,0.85);
+            }
+            100% {
+              box-shadow: 0 0 14px rgba(255,0,0,0.65), inset 0 0 12px rgba(255,0,0,0.45);
+            }
+          }
+        style:
+          left: 93%
+          top: 65%
+          transform: translate(-50%, -50%)
+          z-index: 80
+      - type: icon
+        entity: camera.ipcamera_profile_000
+        icon: mdi:cctv
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        style:
+          left: 93%
+          top: 75%
+          transform: translate(-50%, -50%)
+          color: "#00f5ff"
+          background: rgba(0, 0, 0, 0.68)
+          border: 1px solid rgba(0, 229, 255, 0.85)
+          box-shadow: 0 0 clamp(6px, 1.5vw, 16px) rgba(0, 229, 255, 0.55)
+          border-radius: clamp(7px, 1vw, 14px)
+          padding: clamp(4px, 0.9vw, 10px)
+          z-index: 50
+          "--mdc-icon-size": clamp(14px, 2.4vw, 24px)
+      - type: custom:button-card
+        entity: sensor.total_solar_power
+        name: ВСЬОГО
+        icon: mdi:solar-power-variant
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 47%
+          top: 66%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        extra_styles: |
+          @keyframes totalPvPulse {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.55),
+                0 0 12px rgba(255, 210, 70, 0.35);
+            }
+            50% {
+              box-shadow:
+                0 0 0 10px rgba(255, 210, 70, 0.08),
+                0 0 28px rgba(255, 210, 70, 0.85);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 12px rgba(255, 210, 70, 0.35);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(6px, 0.9vw, 10px)
+            - position: relative
+            - z-index: 3
+          card:
+            - width: max-content
+            - min-width: 0
+            - position: relative
+            - overflow: visible
+            - background: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 10) return 'rgba(48, 36, 4, 0.76)';
+                  return 'rgba(0, 0, 0, 0.58)';
+                ]]]
+            - border-radius: clamp(13px, 1.2vw, 18px)
+            - padding: clamp(6px, 0.9vw, 10px) clamp(9px, 1.1vw, 14px)
+            - border: none
+            - animation: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 10) return 'totalPvPulse 1.8s ease-in-out infinite';
+                  return 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-6px"
+              - border-radius: clamp(13px, 1.2vw, 18px)
+              - padding: 3px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 8400;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  return v > 10 ? '#ffd54f' : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  const v = Number(entity.state);
+                  return v > 10
+                    ? 'drop-shadow(0 0 7px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(22px, 2.8vw, 36px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  return v > 10 ? '#ffd54f' : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  const v = Number(entity.state);
+                  return v > 10
+                    ? '0 0 6px rgba(255, 213, 79, 0.85)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.15vw, 15px)
+            - font-weight: 800
+            - letter-spacing: 0.4px
+            - justify-self: start
+            - align-self: end
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  return v > 10 ? '#ffd54f' : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  const v = Number(entity.state);
+                  return v > 10
+                    ? '0 0 8px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(15px, 2vw, 28px)
+            - font-weight: 900
+            - justify-self: start
+            - align-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.live_clock_seconds
+        show_icon: true
+        show_name: true
+        show_state: true
+        icon: mdi:clock-outline
+        name: |
+          [[[
+            const days = [
+              'Неділя',
+              'Понеділок',
+              'Вівторок',
+              'Середа',
+              'Четвер',
+              'Пʼятниця',
+              'Субота'
+            ];
+
+            const months = [
+              'січня',
+              'лютого',
+              'березня',
+              'квітня',
+              'травня',
+              'червня',
+              'липня',
+              'серпня',
+              'вересня',
+              'жовтня',
+              'листопада',
+              'грудня'
+            ];
+
+            const now = new Date();
+            const dayName = days[now.getDay()];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+
+            return `${dayName}, ${day} ${month}`;
+          ]]]
+        state_display: |
+          [[[
+            return entity.state;
+          ]]]
+        tap_action:
+          action: none
+        style:
+          left: 18%
+          top: 7%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 20
+        styles:
+          grid:
+            - grid-template-areas: "\"i s\" \"i n\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(6px, 0.8vw, 10px)
+            - row-gap: 1px
+          card:
+            - width: max-content
+            - min-width: 0
+            - background: rgba(0, 0, 0, 0.62)
+            - border-radius: clamp(10px, 1vw, 16px)
+            - padding: clamp(5px, 0.8vw, 9px) clamp(8px, 1vw, 12px)
+            - border: 1px solid rgba(255,255,255,0.18)
+            - box-shadow: 0 0 12px rgba(0,0,0,0.45)
+            - box-sizing: border-box
+            - overflow: visible
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(18px, 2.2vw, 28px)
+            - justify-self: center
+            - align-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(14px, 1.8vw, 24px)
+            - font-weight: 900
+            - justify-self: start
+            - align-self: end
+            - line-height: 1
+            - white-space: nowrap
+            - font-variant-numeric: tabular-nums
+          name:
+            - color: white
+            - font-size: clamp(8px, 1vw, 13px)
+            - font-weight: 600
+            - justify-self: start
+            - align-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.sun_day_progress
+        show_name: false
+        show_state: false
+        show_icon: false
+        tap_action:
+          action: more-info
+        style:
+          left: 50%
+          top: 84%
+          width: 88%
+          transform: translate(-50%, -50%)
+          z-index: 15
+        custom_fields:
+          track: ""
+          passed: ""
+          sun: |
+            [[[
+              return '☀';
+            ]]]
+          value: |
+            [[[
+              const p = Number(states['sensor.sun_day_progress']?.state || 0);
+              return `${Math.round(p)}%`;
+            ]]]
+        styles:
+          card:
+            - position: relative
+            - height: clamp(34px, 4vw, 44px)
+            - background: rgba(0, 0, 0, 0.18)
+            - border-radius: 999px
+            - box-shadow: none
+            - border: none
+            - padding: 0
+            - overflow: visible
+          custom_fields:
+            track:
+              - position: absolute
+              - left: 4%
+              - top: 50%
+              - width: 92%
+              - height: 4px
+              - transform: translateY(-50%)
+              - background: >-
+                  linear-gradient(90deg, rgba(255,213,79,0.10),
+                  rgba(255,213,79,0.35), rgba(255,213,79,0.10))
+              - border-radius: 999px
+              - box-shadow: 0 0 8px rgba(255,213,79,0.25)
+              - z-index: 1
+            passed:
+              - position: absolute
+              - right: 4%
+              - top: 50%
+              - width: |
+                  [[[
+                    const p = Math.max(0, Math.min(100, Number(states['sensor.sun_day_progress']?.state || 0)));
+                    return `${p * 0.92}%`;
+                  ]]]
+              - height: 8px
+              - transform: translateY(-50%)
+              - background: >-
+                  linear-gradient(270deg, rgba(255,245,150,1),
+                  rgba(255,213,79,0.85), rgba(255,213,79,0.20))
+              - border-radius: 999px
+              - box-shadow: 0 0 18px rgba(255,213,79,0.95)
+              - z-index: 2
+            sun:
+              - position: absolute
+              - top: 50%
+              - left: |
+                  [[[
+                    const p = Math.max(0, Math.min(100, Number(states['sensor.sun_day_progress']?.state || 0)));
+                    const reversed = 100 - p;
+                    return `calc(4% + ${reversed * 0.92}% - 13px)`;
+                  ]]]
+              - transform: translateY(-50%)
+              - font-size: clamp(18px, 2vw, 26px)
+              - color: "#ffd54f"
+              - filter: drop-shadow(0 0 10px rgba(255,213,79,1))
+              - z-index: 3
+            value:
+              - position: absolute
+              - right: 2%
+              - top: "-2px"
+              - font-size: clamp(9px, 1vw, 12px)
+              - font-weight: 800
+              - color: "#ffd54f"
+              - text-shadow: 0 0 8px rgba(255,213,79,0.9)
+              - z-index: 4
+      - type: conditional
+        conditions:
+          - condition: numeric_state
+            entity: sensor.sun_day_progress
+            above: 0
+            below: 100.1
+        elements:
+          - type: image
+            image: /local/animated_roof_strings_overlay.svg
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              transform: translate(-50%, -50%)
+              pointer-events: none
+      - type: conditional
+        conditions:
+          - condition: numeric_state
+            entity: sensor.sun_day_progress
+            above: 0
+            below: 100.1
+          - entity: switch.sonoff4_ha_sonoff_1000066f8f_1
+            state: "on"
+        elements:
+          - type: image
+            image: /local/animated_roof_microinverters_overlay_v2.svg
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              transform: translate(-50%, -50%)
+              pointer-events: none
+      - type: image
+        entity: camera.network_video_recorder_channel_2
+        camera_image: camera.network_video_recorder_channel_2
+        camera_view: live
+        tap_action:
+          action: more-info
+        style:
+          left: 84%
+          top: 48%
+          transform: translate(-50%, -50%)
+          width: clamp(110px, 18vw, 220px)
+          border-radius: clamp(8px, 1vw, 14px)
+          overflow: hidden
+          border: 1px solid rgba(0, 229, 255, 0.85)
+          box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_today
+        name: СЬОГОДНІ
+        icon: mdi:white-balance-sunny
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 11%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(45, 32, 4, 0.72)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255, 210, 70, 0.85)
+            - box-shadow: 0 0 12px rgba(255, 210, 70, 0.35)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_today
+        icon: mdi:white-balance-sunny
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 11%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(45, 32, 4, 0.68)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255, 210, 70, 0.85)
+            - box-shadow: 0 0 8px rgba(255, 210, 70, 0.35)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_tomorrow
+        name: ЗАВТРА
+        icon: mdi:weather-sunny
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 23.3%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255, 210, 70, 0.55)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_tomorrow
+        icon: mdi:weather-sunny
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 23.3%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255, 210, 70, 0.55)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_3
+        name: ДЕНЬ 3
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 36.6%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_3
+        icon: mdi:weather-partly-cloudy
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 36.6%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_4
+        name: ДЕНЬ 4
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 50%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_4
+        icon: mdi:weather-partly-cloudy
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 50%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_5
+        name: ДЕНЬ 5
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 63.3%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_5
+        icon: mdi:weather-partly-cloudy
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 63.3%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_6
+        name: ДЕНЬ 6
+        icon: mdi:weather-partly-cloudy
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 76.6%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_6
+        icon: mdi:weather-partly-cloudy
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 76.6%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_7
+        name: ДЕНЬ 7
+        icon: mdi:calendar-week
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 90%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(70px, 11vw, 120px)
+          z-index: 40
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\" \"n\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content min-content
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(18px, 2.2vw, 26px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(10px, 1.25vw, 15px)
+            - font-weight: 800
+            - justify-self: center
+            - line-height: 1
+          name:
+            - color: white
+            - font-size: clamp(7px, 0.9vw, 11px)
+            - font-weight: 600
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: none !important;
+              }
+            }
+      - type: custom:button-card
+        entity: sensor.solcast_pv_forecast_forecast_day_7
+        icon: mdi:calendar-week
+        show_name: false
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0.0';
+            return v.toFixed(1);
+          ]]]
+        style:
+          left: 90%
+          top: 93%
+          transform: translate(-50%, -50%)
+          width: clamp(38px, 5vw, 58px)
+          z-index: 41
+        styles:
+          grid:
+            - grid-template-areas: "\"i\" \"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: min-content min-content
+            - row-gap: 1px
+          card:
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(7px, 0.8vw, 10px)
+            - padding: clamp(2px, 0.35vw, 4px)
+            - border: 1px solid rgba(255,255,255,0.16)
+            - box-sizing: border-box
+            - overflow: hidden
+          icon:
+            - color: "#ffe082"
+            - width: clamp(13px, 1.7vw, 18px)
+            - justify-self: center
+          state:
+            - color: "#ffe082"
+            - font-size: clamp(8px, 1.2vw, 11px)
+            - font-weight: 900
+            - justify-self: center
+            - line-height: 1
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 1366px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: image
+        entity: camera.network_video_recorder_channel_1
+        camera_image: camera.network_video_recorder_channel_1
+        camera_view: live
+        tap_action:
+          action: more-info
+        style:
+          left: 84%
+          top: 12%
+          transform: translate(-50%, -50%)
+          width: clamp(110px, 18vw, 220px)
+          border-radius: clamp(8px, 1vw, 14px)
+          overflow: hidden
+          border: 1px solid rgba(0, 229, 255, 0.85)
+          box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+      - type: custom:button-card
+        entity: sensor.today_sun
+        name: СЬОГОДНІ
+        icon: mdi:white-balance-sunny
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 50%
+          top: 7%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 40
+        extra_styles: |
+          @keyframes sunTotalPulse {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 12px rgba(255, 210, 70, 0.35);
+            }
+            50% {
+              box-shadow:
+                0 0 0 9px rgba(255, 210, 70, 0.08),
+                0 0 26px rgba(255, 210, 70, 0.80);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 12px rgba(255, 210, 70, 0.35);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(6px, 0.8vw, 9px)
+            - row-gap: 1px
+          card:
+            - width: max-content
+            - min-width: 0
+            - background: rgba(58, 42, 5, 0.76)
+            - border-radius: clamp(12px, 1.2vw, 18px)
+            - padding: clamp(5px, 0.85vw, 9px) clamp(8px, 1vw, 12px)
+            - border: 1px solid rgba(255, 210, 70, 0.95)
+            - box-sizing: border-box
+            - overflow: visible
+            - animation: |
+                [[[
+                  return Number(entity.state) > 0.1
+                    ? 'sunTotalPulse 2s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(20px, 2.6vw, 32px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - color: white
+            - font-size: clamp(9px, 1.1vw, 13px)
+            - font-weight: 700
+            - letter-spacing: 0.4px
+            - justify-self: start
+            - align-self: end
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(14px, 1.8vw, 22px)
+            - font-weight: 800
+            - justify-self: start
+            - align-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.deye_today_production
+        name: DEYE PV
+        icon: mdi:solar-power-variant
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 27%
+          top: 17%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.7vw, 8px)
+            - row-gap: 1px
+          card:
+            - width: max-content
+            - min-width: 0
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 15px)
+            - padding: clamp(5px, 0.7vw, 8px) clamp(7px, 0.9vw, 10px)
+            - border: 1px solid rgba(255, 210, 70, 0.75)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: |
+                [[[
+                  return Number(entity.state) > 0.1
+                    ? '0 0 14px rgba(255, 210, 70, 0.45)'
+                    : '0 0 8px rgba(255,255,255,0.10)';
+                ]]]
+          icon:
+            - color: "#ffd54f"
+            - width: clamp(17px, 2.1vw, 26px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - color: white
+            - font-size: clamp(8px, 1vw, 12px)
+            - font-weight: 700
+            - justify-self: start
+            - align-self: end
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - color: "#ffd54f"
+            - font-size: clamp(11px, 1.4vw, 17px)
+            - font-weight: 800
+            - justify-self: start
+            - align-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.deye_microinverter_energy_today
+        name: МІКРОІНВЕРТОРИ
+        icon: mdi:solar-panel-large
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 kWh';
+            return v.toFixed(1) + ' kWh';
+          ]]]
+        style:
+          left: 53%
+          top: 17%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.7vw, 8px)
+            - row-gap: 1px
+          card:
+            - width: max-content
+            - min-width: 0
+            - background: rgba(0,0,0,0.62)
+            - border-radius: clamp(10px, 1vw, 15px)
+            - padding: clamp(5px, 0.7vw, 8px) clamp(7px, 0.9vw, 10px)
+            - border: 1px solid rgba(79, 195, 255, 0.75)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: |
+                [[[
+                  return Number(entity.state) > 0.1
+                    ? '0 0 14px rgba(79, 195, 255, 0.45)'
+                    : '0 0 8px rgba(255,255,255,0.10)';
+                ]]]
+          icon:
+            - color: "#4fc3ff"
+            - width: clamp(17px, 2.1vw, 26px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - color: white
+            - font-size: clamp(8px, 1vw, 12px)
+            - font-weight: 700
+            - justify-self: start
+            - align-self: end
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - color: "#4fc3ff"
+            - font-size: clamp(11px, 1.4vw, 17px)
+            - font-weight: 800
+            - justify-self: start
+            - align-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.beny_pv_power
+        name: BENY
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 58%
+          top: 48%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        extra_styles: |
+          @keyframes benyPvPulseYellow {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.6vw, 7px)
+            - position: relative
+            - z-index: 3
+          card:
+            - width: max-content
+            - min-width: 0
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.7vw, 7px) clamp(6px, 0.8vw, 9px)
+            - border: none
+            - box-sizing: border-box
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'benyPvPulseYellow 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-4px"
+              - border-radius: clamp(11px, 1.1vw, 16px)
+              - padding: 2px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 800;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 700
+            - align-self: end
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.inverter_pv1_power
+        name: PV1
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 9%
+          top: 25%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        extra_styles: |
+          @keyframes edgePvPulseYellow1 {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.6vw, 7px)
+            - position: relative
+            - z-index: 3
+          card:
+            - width: max-content
+            - min-width: 0
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.7vw, 7px) clamp(6px, 0.8vw, 9px)
+            - border: none
+            - box-sizing: border-box
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'edgePvPulseYellow1 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-4px"
+              - border-radius: clamp(11px, 1.1vw, 16px)
+              - padding: 2px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 400;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 700
+            - align-self: end
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.inverter_pv2_power
+        name: PV2
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 9%
+          top: 50%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        extra_styles: |
+          @keyframes edgePvPulseYellow2 {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.6vw, 7px)
+            - position: relative
+            - z-index: 3
+          card:
+            - width: max-content
+            - min-width: 0
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.7vw, 7px) clamp(6px, 0.8vw, 9px)
+            - border: none
+            - box-sizing: border-box
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'edgePvPulseYellow2 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-4px"
+              - border-radius: clamp(11px, 1.1vw, 16px)
+              - padding: 2px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 400;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 700
+            - align-self: end
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.deye_pv2_power
+        name: PV2
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 31%
+          top: 27%
+          transform: translate(-50%, -50%)
+          width: clamp(64px, 8vw, 96px)
+        extra_styles: |
+          @keyframes deyePvPulseYellow1 {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.7vw, 8px)
+            - position: relative
+            - z-index: 3
+          card:
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: none
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'deyePvPulseYellow1 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-6px"
+              - border-radius: clamp(13px, 1.2vw, 18px)
+              - padding: 3px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 3000;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#ffd54f'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#ffd54f'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#ffd54f'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+      - type: custom:button-card
+        entity: sensor.deye_pv1_power
+        name: PV1
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 31%
+          top: 43%
+          transform: translate(-50%, -50%)
+          width: clamp(64px, 8vw, 96px)
+        extra_styles: |
+          @keyframes deyePvPulseYellow2 {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.7vw, 8px)
+            - position: relative
+            - z-index: 3
+          card:
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.8vw, 8px)
+            - border: none
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'deyePvPulseYellow2 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-6px"
+              - border-radius: clamp(13px, 1.2vw, 18px)
+              - padding: 3px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 3000;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#ffd54f'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#ffd54f'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#ffd54f'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+      - type: custom:button-card
+        entity: sensor.deye_load_power
+        name: LOAD
+        icon: mdi:home-lightning-bolt
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 76%
+          top: 65%
+          transform: translate(-50%, -50%)
+          width: clamp(78px, 9vw, 122px)
+        extra_styles: |
+          @keyframes loadPulseOrange {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 152, 0, 0.60),
+                0 0 10px rgba(255, 152, 0, 0.25);
+            }
+            50% {
+              box-shadow:
+                0 0 0 8px rgba(255, 152, 0, 0.08),
+                0 0 24px rgba(255, 152, 0, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 152, 0, 0),
+                0 0 10px rgba(255, 152, 0, 0.25);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.8vw, 9px)
+          card:
+            - background: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return 'rgba(68, 38, 8, 0.72)';
+                  return 'rgba(0, 0, 0, 0.58)';
+                ]]]
+            - border-radius: clamp(12px, 1vw, 16px)
+            - padding: clamp(6px, 0.9vw, 10px)
+            - border: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return '1px solid rgba(255, 193, 7, 0.95)';
+                  return '1px solid rgba(255,255,255,0.16)';
+                ]]]
+            - animation: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return 'loadPulseOrange 1.8s ease-in-out infinite';
+                  return 'none';
+                ]]]
+          icon:
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return '#ffc107';
+                  return '#e8f0ff';
+                ]]]
+            - width: clamp(18px, 2.3vw, 28px)
+          name:
+            - color: white
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - color: |
+                [[[
+                  const v = Number(entity.state);
+                  if (v > 100) return '#ffd86b';
+                  return 'white';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+      - type: custom:button-card
+        entity: sensor.deye_battery
+        name: |
+          [[[
+            const p = Number(states['sensor.deye_battery_power']?.state);
+
+            if (isNaN(p)) return '—';
+
+            const unit =
+              states['sensor.deye_battery_power']?.attributes?.unit_of_measurement || 'W';
+
+            return `${p > 0 ? '+' : ''}${Math.round(p)} ${unit}`;
+          ]]]
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          battery_border: ""
+        icon: |
+          [[[
+            const soc = Number(entity.state);
+            const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+            if (isNaN(soc)) return 'mdi:battery-unknown';
+
+            if (p < -80) return 'mdi:battery-charging';
+
+            if (soc >= 95) return 'mdi:battery';
+            if (soc >= 85) return 'mdi:battery-90';
+            if (soc >= 75) return 'mdi:battery-80';
+            if (soc >= 55) return 'mdi:battery-60';
+            if (soc >= 35) return 'mdi:battery-40';
+            if (soc >= 15) return 'mdi:battery-20';
+
+            return 'mdi:battery-outline';
+          ]]]
+        state_display: |
+          [[[
+            const soc = Number(entity.state);
+
+            if (isNaN(soc)) return '—';
+
+            return Math.round(soc) + '%';
+          ]]]
+        style:
+          left: 76%
+          top: 76%
+          transform: translate(-50%, -50%)
+          width: clamp(76px, 9vw, 118px)
+          z-index: 20
+        extra_styles: |
+          @keyframes batteryPulseGreen {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(76, 175, 80, 0.55),
+                0 0 10px rgba(76, 175, 80, 0.25);
+            }
+            50% {
+              box-shadow:
+                0 0 0 8px rgba(76, 175, 80, 0.08),
+                0 0 24px rgba(76, 175, 80, 0.80);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(76, 175, 80, 0),
+                0 0 10px rgba(76, 175, 80, 0.25);
+            }
+          }
+
+          @keyframes batteryPulseBlue {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(33, 150, 243, 0.55),
+                0 0 10px rgba(33, 150, 243, 0.25);
+            }
+            50% {
+              box-shadow:
+                0 0 0 8px rgba(33, 150, 243, 0.08),
+                0 0 24px rgba(33, 150, 243, 0.80);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(33, 150, 243, 0),
+                0 0 10px rgba(33, 150, 243, 0.25);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content 1fr
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(5px, 0.8vw, 9px)
+            - position: relative
+            - z-index: 3
+          card:
+            - position: relative
+            - overflow: visible
+            - background: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return 'rgba(18, 58, 28, 0.78)';
+                  if (p > 80) return 'rgba(14, 36, 68, 0.78)';
+
+                  return 'rgba(0, 0, 0, 0.58)';
+                ]]]
+            - border-radius: clamp(12px, 1vw, 16px)
+            - padding: clamp(6px, 0.9vw, 10px)
+            - border: none
+            - animation: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return 'batteryPulseGreen 1.8s ease-in-out infinite';
+                  if (p > 80) return 'batteryPulseBlue 1.8s ease-in-out infinite';
+
+                  return 'none';
+                ]]]
+          custom_fields:
+            battery_border:
+              - position: absolute
+              - inset: "-6px"
+              - border-radius: clamp(15px, 1.3vw, 20px)
+              - padding: 3px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const soc = Number(entity.state);
+                    const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                    if (isNaN(soc)) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(255,255,255,0.14) 0%,
+                          rgba(255,255,255,0.14) 100%
+                        )
+                      `;
+                    }
+
+                    const percent = Math.min(Math.max(soc, 0), 100);
+
+                    let color = 'rgba(255, 255, 255, 0.9)';
+
+                    if (p < -80) {
+                      color = 'rgba(76, 175, 80, 1)';
+                    } else if (p > 80) {
+                      color = 'rgba(33, 150, 243, 1)';
+                    } else if (soc >= 70) {
+                      color = 'rgba(76, 175, 80, 1)';
+                    } else if (soc >= 35) {
+                      color = 'rgba(255, 213, 79, 1)';
+                    } else {
+                      color = 'rgba(244, 67, 54, 1)';
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        ${color} 0%,
+                        ${color} ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return '#66bb6a';
+                  if (p > 80) return '#42a5f5';
+
+                  return '#e8f0ff';
+                ]]]
+            - width: clamp(18px, 2.3vw, 28px)
+          name:
+            - position: relative
+            - z-index: 3
+            - color: white
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 600
+            - align-self: end
+            - justify-self: start
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  const p = Number(states['sensor.deye_battery_power']?.state ?? 0);
+
+                  if (p < -80) return '#8df59a';
+                  if (p > 80) return '#78c3ff';
+
+                  return 'white';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+      - type: custom:button-card
+        entity: sensor.inverter_2_pv1_power
+        name: PV1
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 77%
+          top: 28%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        extra_styles: |
+          @keyframes pvPulseYellow {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.6vw, 7px)
+            - position: relative
+            - z-index: 3
+          card:
+            - width: max-content
+            - min-width: 0
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.7vw, 7px) clamp(6px, 0.8vw, 9px)
+            - border: none
+            - box-sizing: border-box
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'pvPulseYellow 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-4px"
+              - border-radius: clamp(11px, 1.1vw, 16px)
+              - padding: 2px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 400;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 700
+            - align-self: end
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+      - type: custom:button-card
+        entity: sensor.inverter_2_pv2_power
+        name: PV2
+        icon: mdi:solar-panel
+        show_name: true
+        show_state: true
+        show_icon: true
+        tap_action:
+          action: more-info
+        custom_fields:
+          pv_border: ""
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+
+            if (v >= 1000) {
+              return (v / 1000).toFixed(2) + ' kW';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        style:
+          left: 89%
+          top: 28%
+          transform: translate(-50%, -50%)
+          width: max-content
+          z-index: 25
+        extra_styles: |
+          @keyframes pvPulseYellow2 {
+            0% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0.65),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+            50% {
+              box-shadow:
+                0 0 0 7px rgba(255, 210, 70, 0.08),
+                0 0 18px rgba(255, 210, 70, 0.75);
+            }
+            100% {
+              box-shadow:
+                0 0 0 0 rgba(255, 210, 70, 0),
+                0 0 8px rgba(255, 210, 70, 0.30);
+            }
+          }
+        styles:
+          grid:
+            - grid-template-areas: "\"i n\" \"i s\""
+            - grid-template-columns: min-content max-content
+            - grid-template-rows: min-content min-content
+            - column-gap: clamp(4px, 0.6vw, 7px)
+            - position: relative
+            - z-index: 3
+          card:
+            - width: max-content
+            - min-width: 0
+            - position: relative
+            - overflow: visible
+            - background: rgba(0,0,0,0.58)
+            - border-radius: clamp(10px, 1vw, 14px)
+            - padding: clamp(4px, 0.7vw, 7px) clamp(6px, 0.8vw, 9px)
+            - border: none
+            - box-sizing: border-box
+            - animation: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'pvPulseYellow2 1.8s ease-in-out infinite'
+                    : 'none';
+                ]]]
+          custom_fields:
+            pv_border:
+              - position: absolute
+              - inset: "-4px"
+              - border-radius: clamp(11px, 1.1vw, 16px)
+              - padding: 2px
+              - z-index: 1
+              - pointer-events: none
+              - background: |
+                  [[[
+                    const v = Number(entity.state);
+                    const max = 400;
+                    const percent = Math.min(Math.max(v / max * 100, 0), 100);
+
+                    if (v <= 10) {
+                      return `
+                        conic-gradient(
+                          from -90deg,
+                          rgba(160,160,160,0.35) 0%,
+                          rgba(160,160,160,0.35) 100%
+                        )
+                      `;
+                    }
+
+                    return `
+                      conic-gradient(
+                        from -90deg,
+                        rgba(255, 213, 79, 1) 0%,
+                        rgba(255, 213, 79, 1) ${percent}%,
+                        rgba(255, 255, 255, 0.14) ${percent}%,
+                        rgba(255, 255, 255, 0.14) 100%
+                      )
+                    `;
+                  ]]]
+              - "-webkit-mask": >-
+                  linear-gradient(#000 0 0) content-box, linear-gradient(#000 0
+                  0)
+              - "-webkit-mask-composite": xor
+              - mask-composite: exclude
+          icon:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(170,170,170,0.65)';
+                ]]]
+            - filter: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? 'drop-shadow(0 0 6px rgba(255, 213, 79, 0.95))'
+                    : 'none';
+                ]]]
+            - width: clamp(16px, 2vw, 24px)
+            - justify-self: center
+            - align-self: center
+          name:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(190,190,190,0.65)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 5px rgba(255, 213, 79, 0.75)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(9px, 1vw, 12px)
+            - font-weight: 700
+            - align-self: end
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+          state:
+            - position: relative
+            - z-index: 3
+            - color: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '#4fc3ff'
+                    : 'rgba(210,210,210,0.70)';
+                ]]]
+            - text-shadow: |
+                [[[
+                  return Number(entity.state) > 10
+                    ? '0 0 7px rgba(255, 213, 79, 0.95)'
+                    : 'none';
+                ]]]
+            - font-size: clamp(10px, 1.2vw, 14px)
+            - font-weight: 700
+            - align-self: start
+            - justify-self: start
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            :host {
+              width: max-content !important;
+            }
+
+            ha-card {
+              width: max-content !important;
+            }
+  - type: picture-elements
+    view_layout:
+      grid-area: apartment
+    image: /local/home11.png
+    aspect_ratio: 1/1
+    card_mod:
+      style: |
+        ha-card {
+          width: min(100%, calc(100dvh - 115px));
+          height: min(100%, calc(100dvh - 115px));
+          max-width: 100%;
+          margin: 0 auto;
+          overflow: hidden;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        @media (max-width: 900px) {
+          ha-card {
+            width: min(100vw, calc((100dvh - 130px) / 2));
+            height: min(100vw, calc((100dvh - 130px) / 2));
+          }
+        }
+    elements:
+      - type: custom:button-card
+        entity: input_select.markiza_position
+        show_icon: false
+        show_name: false
+        show_state: false
+        tap_action:
+          action: call-service
+          service: script.markiza_next_level
+        hold_action:
+          action: call-service
+          service: script.markiza_stop
+        double_tap_action:
+          action: call-service
+          service: script.markiza_raise_full
+        custom_fields:
+          awning: |
+            [[[
+              const position = entity.state;
+
+              const level =
+                position === '1/3' ? 1 :
+                position === '2/3' ? 2 :
+                position === 'FULL' ? 3 : 0;
+
+              const label =
+                position === 'ПІДНЯТА' ? '' :
+                position === '1/3' ? '1/3' :
+                position === '2/3' ? '2/3' :
+                position === 'FULL' ? 'FULL' : '';
+
+              return `
+                <div class="awning-wrapper level-${level}">
+                  <div class="awning-cassette"></div>
+
+                  <div class="awning-panel panel-1">
+                    <div class="awning-stripe"></div>
+                  </div>
+
+                  <div class="awning-panel panel-2">
+                    <div class="awning-stripe"></div>
+                  </div>
+
+                  <div class="awning-panel panel-3">
+                    <div class="awning-stripe"></div>
+                  </div>
+
+                  <div class="awning-front">
+                    <div class="awning-valance"></div>
+                  </div>
+
+                  <div class="awning-label">${label}</div>
+                </div>
+              `;
+            ]]]
+        styles:
+          card:
+            - width: clamp(105px, 15vw, 185px)
+            - height: clamp(70px, 10vw, 125px)
+            - padding: 0
+            - background: transparent
+            - border: none
+            - box-shadow: none
+            - overflow: visible
+          grid:
+            - grid-template-areas: "\"awning\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: 1fr
+          custom_fields:
+            awning:
+              - width: 100%
+              - height: 100%
+        extra_styles: |
+          .awning-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            perspective: 240px;
+            overflow: visible;
+          }
+
+          .awning-cassette {
+            position: absolute;
+            left: 4%;
+            top: 3%;
+            width: 92%;
+            height: 10%;
+            border-radius: 5px;
+
+            background:
+              linear-gradient(
+                180deg,
+                rgba(110, 78, 48, 0.98),
+                rgba(55, 35, 22, 0.98)
+              );
+
+            border: 1px solid rgba(255, 220, 170, 0.45);
+
+            box-shadow:
+              0 2px 4px rgba(0,0,0,0.75),
+              0 0 7px rgba(255,210,145,0.24);
+
+            z-index: 10;
+          }
+
+          .awning-panel {
+            position: absolute;
+            left: 7%;
+            width: 86%;
+            height: 27%;
+            opacity: 0;
+
+            transform-origin: top center;
+            transform: rotateX(64deg) scaleY(0);
+
+            transition:
+              opacity 0.45s ease,
+              transform 0.55s ease,
+              top 0.55s ease;
+
+            background:
+              repeating-linear-gradient(
+                90deg,
+                rgba(236, 207, 160, 0.94) 0%,
+                rgba(236, 207, 160, 0.94) 15%,
+                rgba(163, 104, 55, 0.94) 15%,
+                rgba(163, 104, 55, 0.94) 30%
+              );
+
+            border-left: 1px solid rgba(255,255,255,0.22);
+            border-right: 1px solid rgba(0,0,0,0.28);
+
+            box-shadow:
+              inset 0 0 10px rgba(255,255,255,0.12),
+              0 6px 10px rgba(0,0,0,0.22);
+          }
+
+          .panel-1 {
+            top: 11%;
+            z-index: 7;
+          }
+
+          .panel-2 {
+            top: 34%;
+            z-index: 6;
+          }
+
+          .panel-3 {
+            top: 57%;
+            z-index: 5;
+          }
+
+          .awning-stripe {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.25);
+          }
+
+          .level-1 .panel-1,
+          .level-2 .panel-1,
+          .level-2 .panel-2,
+          .level-3 .panel-1,
+          .level-3 .panel-2,
+          .level-3 .panel-3 {
+            opacity: 1;
+            transform: rotateX(54deg) scaleY(1);
+          }
+
+          .awning-front {
+            position: absolute;
+            left: 7%;
+            width: 86%;
+            height: 8%;
+            opacity: 0;
+
+            transition:
+              opacity 0.4s ease,
+              top 0.55s ease;
+
+            background: rgba(93, 55, 29, 0.96);
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 7px rgba(0,0,0,0.55);
+            z-index: 12;
+          }
+
+          .level-1 .awning-front {
+            top: 35%;
+            opacity: 1;
+          }
+
+          .level-2 .awning-front {
+            top: 58%;
+            opacity: 1;
+          }
+
+          .level-3 .awning-front {
+            top: 81%;
+            opacity: 1;
+          }
+
+          .awning-valance {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            width: 100%;
+            height: 7px;
+
+            background:
+              repeating-linear-gradient(
+                90deg,
+                rgba(236, 207, 160, 1) 0%,
+                rgba(236, 207, 160, 1) 15%,
+                rgba(163, 104, 55, 1) 15%,
+                rgba(163, 104, 55, 1) 30%
+              );
+
+            clip-path: polygon(
+              0 0,
+              100% 0,
+              100% 55%,
+              94% 100%,
+              88% 55%,
+              82% 100%,
+              76% 55%,
+              70% 100%,
+              64% 55%,
+              58% 100%,
+              52% 55%,
+              46% 100%,
+              40% 55%,
+              34% 100%,
+              28% 55%,
+              22% 100%,
+              16% 55%,
+              10% 100%,
+              4% 55%,
+              0 100%
+            );
+          }
+
+          .awning-label {
+            position: absolute;
+            left: 50%;
+            top: 46%;
+            transform: translate(-50%, -50%);
+
+            color: rgba(255,255,255,0.95);
+            font-size: clamp(6px, 1vw, 11px);
+            font-weight: 900;
+            letter-spacing: 0.5px;
+
+            text-shadow:
+              0 1px 3px rgba(0,0,0,1),
+              0 0 7px rgba(0,0,0,0.8);
+
+            z-index: 20;
+            pointer-events: none;
+          }
+
+          .level-0 .awning-label {
+            display: none;
+          }
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 105px !important;
+                height: 70px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 78px !important;
+                height: 52px !important;
+              }
+            }
+        style:
+          top: 92%
+          left: 86%
+          transform: translate(-50%, -50%)
+          z-index: 24
+      - type: custom:button-card
+        entity: script.markiza_raise_full
+        icon: mdi:arrow-up-bold
+        show_name: false
+        show_state: false
+        tap_action:
+          action: call-service
+          service: script.markiza_raise_full
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - width: clamp(28px, 3.6vw, 40px)
+            - height: clamp(28px, 3.6vw, 40px)
+            - border-radius: 50%
+            - padding: 2px
+            - box-sizing: border-box
+            - background: rgba(35,35,35,0.86)
+            - border: 1px solid rgba(66,165,245,0.75)
+            - box-shadow: 0 0 8px rgba(66,165,245,0.45)
+          icon:
+            - width: clamp(15px, 2vw, 22px)
+            - color: "#42a5f5"
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 28px !important;
+                height: 28px !important;
+                padding: 1px !important;
+              }
+
+              #icon {
+                width: 15px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              :host {
+                display: none !important;
+              }
+            }
+        style:
+          top: 88%
+          left: 70%
+          transform: translate(-50%, -50%)
+          z-index: 40
+      - type: custom:button-card
+        entity: script.markiza_next_level
+        icon: mdi:arrow-down-bold
+        show_name: false
+        show_state: false
+        tap_action:
+          action: call-service
+          service: script.markiza_next_level
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - width: clamp(28px, 3.6vw, 40px)
+            - height: clamp(28px, 3.6vw, 40px)
+            - border-radius: 50%
+            - padding: 2px
+            - box-sizing: border-box
+            - background: rgba(35,35,35,0.86)
+            - border: 1px solid rgba(255,213,79,0.75)
+            - box-shadow: 0 0 8px rgba(255,213,79,0.45)
+          icon:
+            - width: clamp(15px, 2vw, 22px)
+            - color: "#ffd54f"
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 28px !important;
+                height: 28px !important;
+                padding: 1px !important;
+              }
+
+              #icon {
+                width: 15px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              :host {
+                display: none !important;
+              }
+            }
+        style:
+          top: 94%
+          left: 70%
+          transform: translate(-50%, -50%)
+          z-index: 40
+      - type: custom:button-card
+        entity: script.markiza_stop
+        icon: mdi:stop
+        show_name: false
+        show_state: false
+        tap_action:
+          action: call-service
+          service: script.markiza_stop
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - width: clamp(28px, 3.6vw, 40px)
+            - height: clamp(28px, 3.6vw, 40px)
+            - border-radius: 50%
+            - padding: 2px
+            - box-sizing: border-box
+            - background: rgba(35,35,35,0.86)
+            - border: 1px solid rgba(239,83,80,0.80)
+            - box-shadow: 0 0 8px rgba(239,83,80,0.45)
+          icon:
+            - width: clamp(14px, 1.9vw, 21px)
+            - color: "#ef5350"
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 28px !important;
+                height: 28px !important;
+                padding: 1px !important;
+              }
+
+              #icon {
+                width: 14px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              :host {
+                display: none !important;
+              }
+            }
+        style:
+          top: 88%
+          left: 75%
+          transform: translate(-50%, -50%)
+          z-index: 40
+      - type: custom:button-card
+        entity: script.markiza_lower_full
+        icon: mdi:arrow-collapse-down
+        show_name: false
+        show_state: false
+        tap_action:
+          action: call-service
+          service: script.markiza_lower_full
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - width: clamp(28px, 3.6vw, 40px)
+            - height: clamp(28px, 3.6vw, 40px)
+            - border-radius: 50%
+            - padding: 2px
+            - box-sizing: border-box
+            - background: rgba(35,35,35,0.86)
+            - border: 1px solid rgba(102,187,106,0.80)
+            - box-shadow: 0 0 8px rgba(102,187,106,0.45)
+          icon:
+            - width: clamp(14px, 1.9vw, 21px)
+            - color: "#66bb6a"
+        card_mod:
+          style: |
+            :host {
+              display: block !important;
+            }
+
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 28px !important;
+                height: 28px !important;
+                padding: 1px !important;
+              }
+
+              #icon {
+                width: 14px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              :host {
+                display: none !important;
+              }
+            }
+        style:
+          top: 94%
+          left: 75%
+          transform: translate(-50%, -50%)
+          z-index: 40
+      - type: custom:button-card
+        entity: climate.konditsioner_kukhnia
+        icon: mdi:air-conditioner
+        show_icon: false
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        double_tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            if (
+              entity.state === 'off' ||
+              ['unknown', 'unavailable'].includes(entity.state)
+            ) {
+              return '';
+            }
+
+            const t = entity.attributes.temperature;
+            if (t === undefined || t === null) return '';
+            return Math.round(Number(t)) + '°';
+          ]]]
+        extra_styles: |
+          @keyframes ac_auto_pulse {
+            0% {
+              transform: scale(1);
+              box-shadow:
+                0 0 4px rgba(255,255,255,0.10),
+                0 0 10px rgba(255,255,255,0.08),
+                0 0 18px rgba(255,255,255,0.06),
+                0 0 28px rgba(255,255,255,0.04);
+            }
+            50% {
+              transform: scale(1.03);
+              box-shadow:
+                0 0 8px rgba(255,255,255,0.35),
+                0 0 18px rgba(255,255,255,0.28),
+                0 0 32px rgba(255,255,255,0.22),
+                0 0 48px rgba(255,255,255,0.14);
+            }
+            100% {
+              transform: scale(1);
+              box-shadow:
+                0 0 4px rgba(255,255,255,0.10),
+                0 0 10px rgba(255,255,255,0.08),
+                0 0 18px rgba(255,255,255,0.06),
+                0 0 28px rgba(255,255,255,0.04);
+            }
+          }
+        styles:
+          card:
+            - width: clamp(44px, 4.8vw, 60px)
+            - height: clamp(44px, 4.8vw, 60px)
+            - border-radius: 50%
+            - padding: 0
+            - box-sizing: border-box
+            - overflow: visible
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - background: |
+                [[[
+                  const mode = entity.state;
+                  if (mode === 'off') return 'rgba(58,58,58,0.88)';
+                  if (mode === 'cool') return 'rgba(33,150,243,0.18)';
+                  if (mode === 'heat') return 'rgba(255,152,0,0.18)';
+                  if (mode === 'dry') return 'rgba(0,188,212,0.18)';
+                  if (mode === 'fan_only') return 'rgba(176,190,197,0.18)';
+                  if (mode === 'auto') return 'rgba(156,39,176,0.18)';
+                  return 'rgba(90,90,90,0.85)';
+                ]]]
+            - border: |
+                [[[
+                  const mode = entity.state;
+                  if (mode === 'off') return '1px solid rgba(255,255,255,0.14)';
+                  if (mode === 'cool') return '1px solid rgba(100,181,246,0.95)';
+                  if (mode === 'heat') return '1px solid rgba(255,183,77,0.95)';
+                  if (mode === 'dry') return '1px solid rgba(77,208,225,0.95)';
+                  if (mode === 'fan_only') return '1px solid rgba(176,190,197,0.95)';
+                  if (mode === 'auto') return '1px solid rgba(186,104,200,0.95)';
+                  return '1px solid rgba(255,255,255,0.16)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  const mode = entity.state;
+                  const rawFan = (entity.attributes.fan_mode || '').toString().toLowerCase();
+
+                  let color = '255,255,255';
+                  if (mode === 'cool') color = '100,181,246';
+                  else if (mode === 'heat') color = '255,183,77';
+                  else if (mode === 'dry') color = '77,208,225';
+                  else if (mode === 'fan_only') color = '176,190,197';
+                  else if (mode === 'auto') color = '186,104,200';
+
+                  if (mode === 'off') {
+                    return '0 0 6px rgba(0,0,0,0.45)';
+                  }
+
+                  if (rawFan === 'low') {
+                    return `
+                      0 0 4px rgba(${color},0.35),
+                      0 0 8px rgba(${color},0.22),
+                      0 0 14px rgba(${color},0.14),
+                      0 0 22px rgba(${color},0.08)
+                    `;
+                  }
+
+                  if (rawFan === 'medium' || rawFan === 'mid') {
+                    return `
+                      0 0 5px rgba(${color},0.48),
+                      0 0 12px rgba(${color},0.34),
+                      0 0 20px rgba(${color},0.22),
+                      0 0 30px rgba(${color},0.12)
+                    `;
+                  }
+
+                  if (rawFan === 'high') {
+                    return `
+                      0 0 7px rgba(${color},0.70),
+                      0 0 16px rgba(${color},0.52),
+                      0 0 28px rgba(${color},0.34),
+                      0 0 42px rgba(${color},0.18)
+                    `;
+                  }
+
+                  return `
+                    0 0 6px rgba(${color},0.55),
+                    0 0 14px rgba(${color},0.38),
+                    0 0 24px rgba(${color},0.24),
+                    0 0 36px rgba(${color},0.14)
+                  `;
+                ]]]
+            - animation: |
+                [[[
+                  const rawFan = (entity.attributes.fan_mode || '').toString().toLowerCase();
+                  if (entity.state !== 'off' && (rawFan === 'auto' || entity.state === 'auto')) {
+                    return 'ac_auto_pulse 2.2s ease-in-out infinite';
+                  }
+                  return 'none';
+                ]]]
+          grid:
+            - grid-template-areas: "\"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: 1fr
+            - align-items: center
+            - justify-items: center
+          state:
+            - color: |
+                [[[
+                  const mode = entity.state;
+                  if (mode === 'off') return 'rgba(180,180,180,0.0)';
+                  if (mode === 'cool') return '#90caf9';
+                  if (mode === 'heat') return '#ffcc80';
+                  if (mode === 'dry') return '#80deea';
+                  if (mode === 'fan_only') return '#cfd8dc';
+                  if (mode === 'auto') return '#e1bee7';
+                  return '#ffffff';
+                ]]]
+            - font-size: clamp(11px, 1.15vw, 15px)
+            - font-weight: 900
+            - line-height: 1
+            - white-space: nowrap
+            - text-align: center
+            - text-shadow: |
+                [[[
+                  const mode = entity.state;
+                  if (mode === 'off') return 'none';
+                  if (mode === 'cool') return '0 0 8px rgba(100,181,246,0.85)';
+                  if (mode === 'heat') return '0 0 8px rgba(255,183,77,0.85)';
+                  if (mode === 'dry') return '0 0 8px rgba(77,208,225,0.85)';
+                  if (mode === 'fan_only') return '0 0 8px rgba(176,190,197,0.75)';
+                  if (mode === 'auto') return '0 0 8px rgba(186,104,200,0.85)';
+                  return 'none';
+                ]]]
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 40px !important;
+                height: 40px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 34px !important;
+                height: 34px !important;
+              }
+            }
+        style:
+          top: 75%
+          left: 50%
+          transform: translate(-50%, -50%)
+          z-index: 35
+      - type: image
+        entity: camera.car_profile1
+        camera_image: camera.car_profile1
+        camera_view: live
+        tap_action:
+          action: more-info
+        style:
+          left: 7%
+          top: 88%
+          width: clamp(95px, 9vw, 130px)
+          height: clamp(55px, 5.5vw, 75px)
+          transform: translate(-50%, -50%)
+          border-radius: clamp(8px, 1vw, 14px)
+          overflow: hidden
+          border: 1px solid rgba(0, 229, 255, 0.85)
+          box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+          z-index: 30
+        card_mod:
+          style:
+            hui-image $: |
+              ha-camera-stream {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+
+                width: clamp(155px, 15.5vw, 210px) !important;
+                height: clamp(90px, 9vw, 120px) !important;
+
+                transform: translate(-50%, -100%) rotate(90deg) !important;
+                transform-origin: center center !important;
+              }
+
+              video {
+                object-fit: cover !important;
+              }
+
+              #image {
+                object-fit: cover !important;
+              }
+            .: |
+              :host {
+                display: block !important;
+              }
+
+              ha-card {
+                width: clamp(95px, 9vw, 130px) !important;
+                height: clamp(55px, 5.5vw, 75px) !important;
+                overflow: hidden !important;
+                background: black !important;
+                border-radius: clamp(8px, 1vw, 14px) !important;
+                border: 1px solid rgba(0, 229, 255, 0.85) !important;
+                box-shadow: 0 0 16px rgba(0, 229, 255, 0.55) !important;
+              }
+
+              hui-image {
+                width: clamp(95px, 9vw, 130px) !important;
+                height: clamp(55px, 5.5vw, 75px) !important;
+                overflow: hidden !important;
+                background: black !important;
+                border-radius: clamp(8px, 1vw, 14px) !important;
+              }
+
+              @media (max-width: 700px) {
+                :host {
+                  display: none !important;
+                }
+              }
+      - type: icon
+        entity: camera.car_profile1
+        icon: mdi:cctv
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        style:
+          left: 6%
+          top: 85%
+          transform: translate(-50%, -50%)
+          color: "#00f5ff"
+          background: rgba(0, 0, 0, 0.68)
+          border: 1px solid rgba(0, 229, 255, 0.85)
+          box-shadow: 0 0 clamp(4px, 1vw, 10px) rgba(0, 229, 255, 0.55)
+          border-radius: clamp(5px, 0.8vw, 10px)
+          padding: clamp(2px, 0.45vw, 5px)
+          z-index: 31
+          "--mdc-icon-size": clamp(10px, 1.6vw, 16px)
+        card_mod:
+          style: |
+            :host {
+              display: none !important;
+            }
+
+            @media (max-width: 700px) {
+              :host {
+                display: block !important;
+              }
+            }
+      - type: image
+        entity: camera.network_video_recorder_channel_3
+        camera_image: camera.network_video_recorder_channel_3
+        camera_view: live
+        tap_action:
+          action: more-info
+        style:
+          left: 85%
+          top: 35%
+          width: clamp(110px, 18vw, 220px)
+          height: clamp(62px, 10vw, 124px)
+          transform: translate(-50%, -50%)
+          border-radius: clamp(8px, 1vw, 14px)
+          overflow: hidden
+          border: 1px solid rgba(0, 229, 255, 0.85)
+          box-shadow: 0 0 16px rgba(0, 229, 255, 0.55)
+          z-index: 30
+        card_mod:
+          style:
+            hui-image $: |
+              ha-camera-stream {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+
+                width: 135% !important;
+                height: 135% !important;
+
+                transform: translate(-50%, -50%) !important;
+              }
+
+              video {
+                width: 135% !important;
+                height: 135% !important;
+                object-fit: cover !important;
+              }
+
+              #image {
+                width: 135% !important;
+                height: 135% !important;
+                object-fit: cover !important;
+              }
+            .: |
+              :host {
+                display: block !important;
+              }
+
+              ha-card {
+                width: clamp(110px, 18vw, 220px) !important;
+                height: clamp(62px, 10vw, 124px) !important;
+                overflow: hidden !important;
+                background: black !important;
+                border-radius: clamp(8px, 1vw, 14px) !important;
+                border: 1px solid rgba(0, 229, 255, 0.85) !important;
+                box-shadow: 0 0 16px rgba(0, 229, 255, 0.55) !important;
+              }
+
+              hui-image {
+                width: clamp(110px, 18vw, 220px) !important;
+                height: clamp(62px, 10vw, 124px) !important;
+                overflow: hidden !important;
+                background: black !important;
+                border-radius: clamp(8px, 1vw, 14px) !important;
+              }
+      - type: custom:button-card
+        entity: sensor.smart_plug_power_2
+        icon: mdi:desktop-tower-monitor
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+            return Math.round(v) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(8px, 1.2vw, 12px)
+            - padding: 4px 5px
+            - width: clamp(42px, 5vw, 54px)
+            - height: clamp(42px, 5.3vw, 56px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: 0 0 clamp(6px, 1.2vw, 11px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: |
+                "i"
+                "s"
+            - grid-template-columns: 1fr
+            - grid-template-rows: 18px auto
+            - row-gap: 2px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: cyan
+            - width: clamp(15px, 2vw, 18px)
+            - height: clamp(15px, 2vw, 18px)
+            - justify-self: center
+          state:
+            - color: cyan
+            - font-size: clamp(8px, 1.5vw, 11px)
+            - font-weight: bold
+            - line-height: 1
+            - justify-self: center
+            - white-space: nowrap
+        style:
+          top: 15%
+          left: 9%
+      - type: custom:button-card
+        entity: switch.wifi_breaker_t_switch_1
+        icon: mdi:led-strip-variant
+        show_name: false
+        show_state: false
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        extra_styles: |
+          @keyframes led_glow_pulse_2 {
+            0% {
+              box-shadow:
+                0 0 6px rgba(255,215,0,0.55),
+                0 0 12px rgba(255,215,0,0.35),
+                0 0 20px rgba(255,215,0,0.20);
+            }
+
+            50% {
+              box-shadow:
+                0 0 12px rgba(255,215,0,1),
+                0 0 26px rgba(255,215,0,0.85),
+                0 0 44px rgba(255,215,0,0.55);
+            }
+
+            100% {
+              box-shadow:
+                0 0 6px rgba(255,215,0,0.55),
+                0 0 12px rgba(255,215,0,0.35),
+                0 0 20px rgba(255,215,0,0.20);
+            }
+          }
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(255,215,0,0.32), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(38px, 5.5vw, 56px)
+            - height: clamp(38px, 5.5vw, 56px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - overflow: visible
+            - box-sizing: border-box
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid rgba(255,215,0,0.85)';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 16px rgba(255,215,0,0.85), 0 0 30px rgba(255,215,0,0.45)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - animation: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'led_glow_pulse_2 1.7s ease-in-out infinite';
+                  }
+
+                  return 'none';
+                ]]]
+          icon:
+            - width: clamp(20px, 3vw, 30px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#FFD700'
+                    : 'gray';
+                ]]]
+            - filter: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'drop-shadow(0 0 5px rgba(255,215,0,0.75))';
+                  }
+
+                  return 'none';
+                ]]]
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 40px !important;
+                height: 40px !important;
+                padding: 2px !important;
+              }
+
+              #icon {
+                width: 22px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 34px !important;
+                height: 34px !important;
+                padding: 2px !important;
+              }
+
+              #icon {
+                width: 18px !important;
+              }
+            }
+        style:
+          top: 49%
+          left: 96%
+      - type: custom:button-card
+        entity: sensor.deye_load_power
+        show_icon: false
+        show_name: false
+        show_state: false
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        custom_fields:
+          inverter: |
+            [[[
+              const p = states['sensor.deye_load_power'];
+              const value = p && !['unknown','unavailable'].includes(p.state)
+                ? Math.round(Number(p.state)) + ' W'
+                : 'OFF';
+
+              return `
+                <div class="power-row inverter-row">
+                  <ha-icon icon="mdi:flash"></ha-icon>
+                  <span class="label">LOAD</span>
+                  <span class="value">${value}</span>
+                </div>
+              `;
+            ]]]
+          apartment: |
+            [[[
+              const p = states['sensor.ups_power'];
+              const value = p && !['unknown','unavailable'].includes(p.state)
+                ? Math.round(Number(p.state)) + ' W'
+                : 'OFF';
+
+              return `
+                <div class="power-row apartment-row">
+                  <ha-icon icon="mdi:home-lightning-bolt"></ha-icon>
+                  <span class="label">КВАРТИРА</span>
+                  <span class="value">${value}</span>
+                </div>
+              `;
+            ]]]
+          parents: |
+            [[[
+              const p = states['sensor.batki_ups_power'];
+              const value = p && !['unknown','unavailable'].includes(p.state)
+                ? Math.round(Number(p.state)) + ' W'
+                : 'OFF';
+
+              return `
+                <div class="power-row parents-row">
+                  <ha-icon icon="mdi:home-heart"></ha-icon>
+                  <span class="label">БАТЬКИ</span>
+                  <span class="value">${value}</span>
+                </div>
+              `;
+            ]]]
+          boiler: |
+            [[[
+              const p = states['sensor.asic_a3_sonoff_1000241bb9_power'];
+              const value = p && !['unknown','unavailable'].includes(p.state)
+                ? Math.round(Number(p.state)) + ' W'
+                : 'OFF';
+
+              return `
+                <div class="power-row boiler-row">
+                  <ha-icon icon="mdi:server-network"></ha-icon>
+                  <span class="label">СЕРВЕРНА</span>
+                  <span class="value">${value}</span>
+                </div>
+              `;
+            ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  const total = Number(states['sensor.deye_load_power']?.state || 0);
+
+                  if (total > 1800) {
+                    return 'radial-gradient(circle, rgba(255,140,0,0.28), rgba(0,0,0,0.78))';
+                  }
+
+                  if (total > 600) {
+                    return 'radial-gradient(circle, rgba(0,255,255,0.22), rgba(0,0,0,0.72))';
+                  }
+
+                  return 'rgba(0,0,0,0.55)';
+                ]]]
+            - border-radius: |
+                [[[
+                  return window.innerWidth <= 700
+                    ? '12px'
+                    : 'clamp(10px, 2vw, 20px)';
+                ]]]
+            - padding: |
+                [[[
+                  return window.innerWidth <= 700
+                    ? '5px'
+                    : 'clamp(5px, 1vw, 10px)';
+                ]]]
+            - width: |
+                [[[
+                  return window.innerWidth <= 700
+                    ? 'clamp(112px, 30vw, 145px)'
+                    : 'clamp(160px, 20vw, 255px)';
+                ]]]
+            - height: |
+                [[[
+                  return window.innerWidth <= 700
+                    ? '38px'
+                    : 'clamp(96px, 13vw, 145px)';
+                ]]]
+            - box-sizing: border-box
+            - overflow: hidden
+            - border: 1px solid rgba(0,255,255,0.35)
+            - box-shadow: |
+                [[[
+                  const total = Number(states['sensor.deye_load_power']?.state || 0);
+
+                  if (total > 1800) {
+                    return '0 0 clamp(10px, 2vw, 26px) rgba(255,140,0,0.90)';
+                  }
+
+                  if (total > 600) {
+                    return '0 0 clamp(8px, 1.8vw, 22px) rgba(0,255,255,0.75)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 10px) rgba(0,255,255,0.35)';
+                ]]]
+          grid:
+            - grid-template-areas: |
+                "inverter"
+                "apartment"
+                "parents"
+                "boiler"
+            - grid-template-columns: 1fr
+            - grid-template-rows: |
+                [[[
+                  return window.innerWidth <= 700
+                    ? '1fr'
+                    : '1fr 1fr 1fr 1fr';
+                ]]]
+            - row-gap: |
+                [[[
+                  return window.innerWidth <= 700
+                    ? '0px'
+                    : 'clamp(3px, 0.6vw, 6px)';
+                ]]]
+          custom_fields:
+            inverter:
+              - align-self: center
+            apartment:
+              - align-self: center
+            parents:
+              - align-self: center
+            boiler:
+              - align-self: center
+        extra_styles: |
+          .power-row {
+            display: grid;
+            grid-template-columns: clamp(14px, 2vw, 22px) minmax(0, 1fr) max-content;
+            align-items: center;
+            column-gap: clamp(4px, 0.7vw, 8px);
+            width: 100%;
+            height: clamp(19px, 2.6vw, 30px);
+            padding: 0 clamp(8px, 1vw, 12px) 0 clamp(5px, 0.8vw, 8px);
+            border-radius: clamp(6px, 1vw, 12px);
+            background: rgba(255,255,255,0.04);
+            box-sizing: border-box;
+            overflow: hidden;
+          }
+
+          .power-row ha-icon {
+            width: clamp(13px, 1.9vw, 21px);
+            height: clamp(13px, 1.9vw, 21px);
+            min-width: clamp(13px, 1.9vw, 21px);
+          }
+
+          .label {
+            color: rgba(255,255,255,0.78);
+            font-size: clamp(6px, 0.82vw, 10px);
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+          }
+
+          .value {
+            font-size: clamp(9px, 1.25vw, 18px);
+            font-weight: 900;
+            white-space: nowrap;
+            text-align: right;
+            padding-right: clamp(2px, 0.4vw, 6px);
+          }
+
+          .inverter-row ha-icon,
+          .inverter-row .value {
+            color: #ffea00;
+          }
+
+          .apartment-row ha-icon,
+          .apartment-row .value {
+            color: #00ffff;
+          }
+
+          .parents-row ha-icon,
+          .parents-row .value {
+            color: #00ff9d;
+          }
+
+          .boiler-row ha-icon,
+          .boiler-row .value {
+            color: #ffb347;
+          }
+
+          @media (max-width: 700px) {
+            .apartment-row,
+            .parents-row,
+            .boiler-row {
+              display: none !important;
+            }
+
+            .power-row {
+              height: 28px !important;
+              padding: 0 7px !important;
+              border-radius: 10px !important;
+              background: rgba(255,255,255,0.04) !important;
+              grid-template-columns: 18px 1fr max-content !important;
+              column-gap: 5px !important;
+            }
+
+            .power-row ha-icon {
+              width: 16px !important;
+              height: 16px !important;
+              min-width: 16px !important;
+            }
+
+            .label {
+              font-size: 7px !important;
+              letter-spacing: 0 !important;
+            }
+
+            .value {
+              font-size: 12px !important;
+              padding-right: 0 !important;
+            }
+          }
+        style:
+          top: 11%
+          left: 83%
+          transform: translate(-50%, -50%)
+      - type: custom:button-card
+        entity: binary_sensor.192_168_1_143
+        icon: mdi:shield-lock
+        name: ПІД ОХОРОНОЮ
+        show_name: true
+        show_icon: true
+        show_state: false
+        tap_action:
+          action: none
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - display: |
+                [[[
+                  return entity.state === 'off' ? 'flex' : 'none';
+                ]]]
+            - background: rgba(120, 0, 0, 0.82)
+            - border: 2px solid rgba(255, 60, 60, 0.95)
+            - border-radius: clamp(14px, 2vw, 26px)
+            - padding: clamp(10px, 2vw, 22px)
+            - width: clamp(190px, 32vw, 420px)
+            - height: clamp(70px, 10vw, 120px)
+            - box-shadow: 0 0 clamp(18px, 4vw, 45px) rgba(255, 0, 0, 0.95)
+            - animation: blink-security 1.4s infinite
+          grid:
+            - grid-template-areas: "\"i n\""
+            - grid-template-columns: auto 1fr
+            - align-items: center
+            - justify-content: center
+            - column-gap: clamp(8px, 1.5vw, 18px)
+          icon:
+            - color: "#ff3333"
+            - width: clamp(30px, 5vw, 58px)
+          name:
+            - color: white
+            - font-size: clamp(18px, 3.2vw, 42px)
+            - font-weight: 900
+            - letter-spacing: 1px
+            - text-shadow: 0 0 10px rgba(255,0,0,0.9)
+        extra_styles: |
+          @keyframes blink-security {
+            0% {
+              filter: brightness(1);
+              transform: scale(1);
+            }
+            50% {
+              filter: brightness(1.35);
+              transform: scale(1.03);
+            }
+            100% {
+              filter: brightness(1);
+              transform: scale(1);
+            }
+          }
+        style:
+          top: 50%
+          left: 50%
+          z-index: 999
+      - type: custom:button-card
+        entity: switch.wifi_breaker_t_2_switch_1
+        icon: mdi:led-strip-variant
+        show_name: false
+        show_state: false
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        extra_styles: |
+          @keyframes led_glow_pulse {
+            0% {
+              box-shadow:
+                0 0 6px rgba(255,215,0,0.55),
+                0 0 12px rgba(255,215,0,0.35),
+                0 0 20px rgba(255,215,0,0.20);
+            }
+
+            50% {
+              box-shadow:
+                0 0 12px rgba(255,215,0,1),
+                0 0 26px rgba(255,215,0,0.85),
+                0 0 44px rgba(255,215,0,0.55);
+            }
+
+            100% {
+              box-shadow:
+                0 0 6px rgba(255,215,0,0.55),
+                0 0 12px rgba(255,215,0,0.35),
+                0 0 20px rgba(255,215,0,0.20);
+            }
+          }
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(255,215,0,0.32), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(38px, 5.5vw, 56px)
+            - height: clamp(38px, 5.5vw, 56px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - overflow: visible
+            - box-sizing: border-box
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid rgba(255,215,0,0.85)';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 16px rgba(255,215,0,0.85), 0 0 30px rgba(255,215,0,0.45)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - animation: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'led_glow_pulse 1.7s ease-in-out infinite';
+                  }
+
+                  return 'none';
+                ]]]
+          icon:
+            - width: clamp(20px, 3vw, 30px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#FFD700'
+                    : 'gray';
+                ]]]
+            - filter: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'drop-shadow(0 0 5px rgba(255,215,0,0.75))';
+                  }
+
+                  return 'none';
+                ]]]
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 40px !important;
+                height: 40px !important;
+                padding: 2px !important;
+              }
+
+              #icon {
+                width: 22px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 34px !important;
+                height: 34px !important;
+                padding: 1px !important;
+              }
+
+              #icon {
+                width: 18px !important;
+              }
+            }
+        style:
+          top: 92%
+          left: 48%
+      - type: custom:button-card
+        entity: sensor.kholodilnik_power
+        icon: mdi:fridge-outline
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+
+            if (isNaN(v)) {
+              return '0 W';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return 'rgba(40,40,40,0.55)';
+                  }
+
+                  return 'rgba(0,0,0,0.60)';
+                ]]]
+            - border-radius: clamp(8px, 1.2vw, 12px)
+            - padding: 3px 6px
+            - width: clamp(58px, 6.5vw, 78px)
+            - height: clamp(26px, 3.2vw, 34px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return '0 0 clamp(4px, 1vw, 8px) rgba(80,80,80,0.35)';
+                  }
+
+                  return '0 0 clamp(6px, 1.2vw, 11px) rgba(0,255,255,0.55)';
+                ]]]
+          grid:
+            - grid-template-areas: "\"i s\""
+            - grid-template-columns: 16px auto
+            - grid-template-rows: 1fr
+            - column-gap: 5px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return 'gray';
+                  }
+
+                  return 'cyan';
+                ]]]
+            - width: 16px
+            - height: 16px
+          state:
+            - color: |
+                [[[
+                  const sw = states['switch.kholodilnik_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return 'gray';
+                  }
+
+                  return 'cyan';
+                ]]]
+            - font-size: clamp(8px, 1.4vw, 11px)
+            - font-weight: bold
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 54px !important;
+                height: 28px !important;
+                padding: 2px 4px !important;
+                border-radius: 8px !important;
+              }
+
+              #icon {
+                width: 14px !important;
+                height: 14px !important;
+              }
+
+              #state {
+                font-size: 9px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 46px !important;
+                height: 24px !important;
+                padding: 1px 3px !important;
+                border-radius: 7px !important;
+              }
+
+              #icon {
+                width: 12px !important;
+                height: 12px !important;
+              }
+
+              #state {
+                font-size: 8px !important;
+              }
+            }
+        style:
+          top: 77%
+          left: 92%
+      - type: custom:button-card
+        entity: sensor.smart_plug_power
+        icon: mdi:microwave
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+
+            if (isNaN(v)) {
+              return '0 W';
+            }
+
+            return Math.round(v) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return 'rgba(40,40,40,0.55)';
+                  }
+
+                  return 'rgba(0,0,0,0.60)';
+                ]]]
+            - border-radius: clamp(8px, 1.2vw, 12px)
+            - padding: 3px 6px
+            - width: clamp(58px, 6.5vw, 78px)
+            - height: clamp(26px, 3.2vw, 34px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return '0 0 clamp(4px, 1vw, 8px) rgba(80,80,80,0.35)';
+                  }
+
+                  return '0 0 clamp(6px, 1.2vw, 11px) rgba(0,255,255,0.55)';
+                ]]]
+          grid:
+            - grid-template-areas: "\"i s\""
+            - grid-template-columns: 16px auto
+            - grid-template-rows: 1fr
+            - column-gap: 5px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return 'gray';
+                  }
+
+                  return 'cyan';
+                ]]]
+            - width: 16px
+            - height: 16px
+          state:
+            - color: |
+                [[[
+                  const sw = states['switch.smart_plug_switch_1'];
+
+                  if (sw && sw.state === 'off') {
+                    return 'gray';
+                  }
+
+                  return 'cyan';
+                ]]]
+            - font-size: clamp(8px, 1.4vw, 11px)
+            - font-weight: bold
+            - line-height: 1
+            - white-space: nowrap
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 54px !important;
+                height: 28px !important;
+                padding: 2px 4px !important;
+                border-radius: 8px !important;
+              }
+
+              #icon {
+                width: 14px !important;
+                height: 14px !important;
+              }
+
+              #state {
+                font-size: 9px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 46px !important;
+                height: 24px !important;
+                padding: 1px 3px !important;
+                border-radius: 7px !important;
+              }
+
+              #icon {
+                width: 12px !important;
+                height: 12px !important;
+              }
+
+              #state {
+                font-size: 8px !important;
+              }
+            }
+        style:
+          top: 70%
+          left: 92%
+      - type: custom:button-card
+        entity: climate.floor_heating
+        icon: mdi:radiator
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        state_display: |
+          [[[
+            const temp = entity.attributes.current_temperature;
+            return temp ? temp + '°C' : entity.state;
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.attributes.hvac_action === 'heating') {
+                    return 'rgba(255,165,0,0.65)';
+                  }
+
+                  return 'rgba(0,0,0,0.5)';
+                ]]]
+            - border-radius: clamp(10px, 2vw, 18px)
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  if (entity.attributes.hvac_action === 'heating') {
+                    return '0 0 clamp(10px, 2vw, 24px) rgba(255,215,0,0.95)';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+          icon:
+            - width: clamp(18px, 3vw, 30px)
+            - color: |
+                [[[
+                  const action = entity.attributes.hvac_action;
+                  const state = entity.state;
+
+                  if (action === 'heating' || action === 'heat' || action === 'running') {
+                    return '#ff0000';
+                  }
+
+                  if (state !== 'off') {
+                    return 'orange';
+                  }
+
+                  return 'gray';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(9px, 1.8vw, 16px)
+            - font-weight: bold
+        style:
+          top: 86%
+          left: 57%
+      - type: custom:button-card
+        entity: sensor.boiler_power
+        icon: mdi:water-boiler
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+            return Math.round(v) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(8px, 1.2vw, 12px)
+            - padding: 4px 5px
+            - width: clamp(42px, 5vw, 54px)
+            - height: clamp(42px, 5.3vw, 56px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: 0 0 clamp(6px, 1.2vw, 11px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: |
+                "i"
+                "s"
+            - grid-template-columns: 1fr
+            - grid-template-rows: 18px auto
+            - row-gap: 2px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: cyan
+            - width: clamp(15px, 2vw, 18px)
+            - height: clamp(15px, 2vw, 18px)
+            - justify-self: center
+          state:
+            - color: cyan
+            - font-size: clamp(8px, 1.5vw, 11px)
+            - font-weight: bold
+            - line-height: 1
+            - justify-self: center
+            - white-space: nowrap
+        style:
+          top: 6%
+          left: 60%
+      - type: custom:button-card
+        entity: sensor.kompiuter_power
+        icon: mdi:desktop-tower-monitor
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+            return Math.round(v) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(8px, 1.2vw, 12px)
+            - padding: 4px 5px
+            - width: clamp(42px, 5vw, 54px)
+            - height: clamp(42px, 5.3vw, 56px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: 0 0 clamp(6px, 1.2vw, 11px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: |
+                "i"
+                "s"
+            - grid-template-columns: 1fr
+            - grid-template-rows: 18px auto
+            - row-gap: 2px
+            - align-items: center
+            - justify-content: center
+          icon:
+            - color: cyan
+            - width: clamp(15px, 2vw, 18px)
+            - height: clamp(15px, 2vw, 18px)
+            - justify-self: center
+          state:
+            - color: cyan
+            - font-size: clamp(8px, 1.5vw, 11px)
+            - font-weight: bold
+            - line-height: 1
+            - justify-self: center
+            - white-space: nowrap
+        style:
+          top: 90%
+          left: 40%
+      - type: custom:button-card
+        entity: sensor.pc_power
+        show_name: false
+        show_icon: false
+        show_state: true
+        state_display: |
+          [[[
+            const v = Number(entity.state);
+            if (isNaN(v)) return '0 W';
+            return Math.round(v) + ' W';
+          ]]]
+        styles:
+          card:
+            - background: rgba(0,0,0,0.60)
+            - border-radius: clamp(8px, 1.2vw, 12px)
+            - padding: 3px 7px
+            - width: clamp(42px, 5vw, 58px)
+            - height: clamp(24px, 3.2vw, 32px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: 0 0 clamp(6px, 1.2vw, 11px) rgba(0,255,255,0.55)
+          grid:
+            - grid-template-areas: "\"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: 1fr
+            - align-items: center
+            - justify-content: center
+          state:
+            - color: cyan
+            - font-size: clamp(9px, 1.7vw, 12px)
+            - font-weight: bold
+            - line-height: 1
+            - justify-self: center
+            - align-self: center
+            - white-space: nowrap
+        style:
+          top: 80%
+          left: 40%
+      - type: custom:button-card
+        entity: climate.floor_heating
+        icon: mdi:circle
+        show_name: false
+        show_state: false
+        tap_action:
+          action: none
+        styles:
+          card:
+            - background: none
+            - box-shadow: none
+            - width: clamp(6px, 1vw, 10px)
+            - height: clamp(6px, 1vw, 10px)
+          icon:
+            - width: clamp(8px, 1.5vw, 14px)
+            - color: |
+                [[[
+                  const current = Number(entity.attributes.current_temperature);
+                  const target = Number(entity.attributes.temperature);
+
+                  if (entity.state !== 'off' && target > current) {
+                    return '#ff0000';
+                  }
+
+                  return 'transparent';
+                ]]]
+        style:
+          top: 84%
+          left: 59%
+      - type: custom:button-card
+        entity: light.dimmer_kukhnia
+        icon: mdi:led-strip-variant
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        state_display: |
+          [[[
+            if (entity.state === 'on') {
+              const b = entity.attributes.brightness ?? 0;
+              return Math.round(b / 2.55) + '%';
+            }
+            return 'Вимк.';
+          ]]]
+        extra_styles: |
+          @keyframes dimmer_glow_pulse {
+            0% {
+              box-shadow:
+                0 0 var(--glow-small) rgba(255,215,0,var(--glow-a1)),
+                0 0 var(--glow-mid) rgba(255,215,0,var(--glow-a2)),
+                0 0 var(--glow-big) rgba(255,215,0,var(--glow-a3));
+            }
+            50% {
+              box-shadow:
+                0 0 var(--glow-small-2) rgba(255,215,0,var(--glow-a1)),
+                0 0 var(--glow-mid-2) rgba(255,215,0,var(--glow-a2)),
+                0 0 var(--glow-big-2) rgba(255,215,0,var(--glow-a3));
+            }
+            100% {
+              box-shadow:
+                0 0 var(--glow-small) rgba(255,215,0,var(--glow-a1)),
+                0 0 var(--glow-mid) rgba(255,215,0,var(--glow-a2)),
+                0 0 var(--glow-big) rgba(255,215,0,var(--glow-a3));
+            }
+          }
+        styles:
+          card:
+            - "--glow-small": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${6 + p * 10}px`;
+                ]]]
+            - "--glow-mid": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${12 + p * 24}px`;
+                ]]]
+            - "--glow-big": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${18 + p * 44}px`;
+                ]]]
+            - "--glow-small-2": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${10 + p * 16}px`;
+                ]]]
+            - "--glow-mid-2": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${18 + p * 34}px`;
+                ]]]
+            - "--glow-big-2": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${28 + p * 70}px`;
+                ]]]
+            - "--glow-a1": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${0.35 + p * 0.55}`;
+                ]]]
+            - "--glow-a2": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${0.18 + p * 0.55}`;
+                ]]]
+            - "--glow-a3": |
+                [[[
+                  const b = entity.attributes.brightness ?? 0;
+                  const p = b / 255;
+                  return `${0.08 + p * 0.38}`;
+                ]]]
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = entity.attributes.brightness ?? 0;
+                    const p = b / 255;
+                    const a = 0.18 + p * 0.28;
+                    return `radial-gradient(circle, rgba(255,215,0,${a}), rgba(0,0,0,0.65))`;
+                  }
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - overflow: visible
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = entity.attributes.brightness ?? 0;
+                    const p = b / 255;
+                    return `2px solid rgba(255,215,0,${0.45 + p * 0.45})`;
+                  }
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = entity.attributes.brightness ?? 0;
+                    const p = b / 255;
+
+                    const s1 = 6 + p * 10;
+                    const s2 = 12 + p * 24;
+                    const s3 = 18 + p * 44;
+
+                    const a1 = 0.35 + p * 0.55;
+                    const a2 = 0.18 + p * 0.55;
+                    const a3 = 0.08 + p * 0.38;
+
+                    return `
+                      0 0 ${s1}px rgba(255,215,0,${a1}),
+                      0 0 ${s2}px rgba(255,215,0,${a2}),
+                      0 0 ${s3}px rgba(255,215,0,${a3})
+                    `;
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - animation: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'dimmer_glow_pulse 1.8s ease-in-out infinite';
+                  }
+                  return 'none';
+                ]]]
+          icon:
+            - width: clamp(18px, 3vw, 32px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#FFD700'
+                    : 'gray';
+                ]]]
+            - filter: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = entity.attributes.brightness ?? 0;
+                    const p = b / 255;
+                    return `drop-shadow(0 0 ${3 + p * 6}px rgba(255,215,0,${0.4 + p * 0.5}))`;
+                  }
+                  return 'none';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(8px, 1.5vw, 12px)
+            - font-weight: bold
+            - line-height: 1
+        style:
+          top: 63%
+          left: 80%
+      - type: custom:button-card
+        entity: input_boolean.lamps_eva_virtual
+        icon: mdi:lightbulb
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        state_display: |
+          [[[
+            const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+            return Math.round(b) + '%';
+          ]]]
+        extra_styles: |
+          @keyframes eva_lamp_glow_pulse {
+            0% {
+              box-shadow:
+                0 0 var(--glow-small) rgba(255,215,0,var(--glow-a1)),
+                0 0 var(--glow-mid) rgba(255,215,0,var(--glow-a2)),
+                0 0 var(--glow-big) rgba(255,215,0,var(--glow-a3));
+            }
+            50% {
+              box-shadow:
+                0 0 var(--glow-small-2) rgba(255,215,0,var(--glow-a1)),
+                0 0 var(--glow-mid-2) rgba(255,215,0,var(--glow-a2)),
+                0 0 var(--glow-big-2) rgba(255,215,0,var(--glow-a3));
+            }
+            100% {
+              box-shadow:
+                0 0 var(--glow-small) rgba(255,215,0,var(--glow-a1)),
+                0 0 var(--glow-mid) rgba(255,215,0,var(--glow-a2)),
+                0 0 var(--glow-big) rgba(255,215,0,var(--glow-a3));
+            }
+          }
+        styles:
+          card:
+            - "--glow-small": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${6 + p * 10}px`;
+                ]]]
+            - "--glow-mid": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${12 + p * 24}px`;
+                ]]]
+            - "--glow-big": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${18 + p * 44}px`;
+                ]]]
+            - "--glow-small-2": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${10 + p * 16}px`;
+                ]]]
+            - "--glow-mid-2": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${18 + p * 34}px`;
+                ]]]
+            - "--glow-big-2": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${28 + p * 70}px`;
+                ]]]
+            - "--glow-a1": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${0.35 + p * 0.55}`;
+                ]]]
+            - "--glow-a2": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${0.18 + p * 0.55}`;
+                ]]]
+            - "--glow-a3": |
+                [[[
+                  const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                  const p = Math.max(0, Math.min(100, b)) / 100;
+                  return `${0.08 + p * 0.38}`;
+                ]]]
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                    const p = Math.max(0, Math.min(100, b)) / 100;
+                    const a = 0.18 + p * 0.28;
+                    return `radial-gradient(circle, rgba(255,215,0,${a}), rgba(0,0,0,0.65))`;
+                  }
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - overflow: visible
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                    const p = Math.max(0, Math.min(100, b)) / 100;
+                    return `2px solid rgba(255,215,0,${0.45 + p * 0.45})`;
+                  }
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                    const p = Math.max(0, Math.min(100, b)) / 100;
+
+                    const s1 = 6 + p * 10;
+                    const s2 = 12 + p * 24;
+                    const s3 = 18 + p * 44;
+
+                    const a1 = 0.35 + p * 0.55;
+                    const a2 = 0.18 + p * 0.55;
+                    const a3 = 0.08 + p * 0.38;
+
+                    return `
+                      0 0 ${s1}px rgba(255,215,0,${a1}),
+                      0 0 ${s2}px rgba(255,215,0,${a2}),
+                      0 0 ${s3}px rgba(255,215,0,${a3})
+                    `;
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - animation: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'eva_lamp_glow_pulse 1.8s ease-in-out infinite';
+                  }
+                  return 'none';
+                ]]]
+          icon:
+            - width: clamp(20px, 3.2vw, 32px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#FFD700'
+                    : 'gray';
+                ]]]
+            - filter: |
+                [[[
+                  if (entity.state === 'on') {
+                    const b = Number(states['input_number.lamps_eva_brightness']?.state ?? 0);
+                    const p = Math.max(0, Math.min(100, b)) / 100;
+                    return `drop-shadow(0 0 ${3 + p * 6}px rgba(255,215,0,${0.4 + p * 0.5}))`;
+                  }
+                  return 'none';
+                ]]]
+          state:
+            - color: white
+            - font-size: clamp(8px, 1.5vw, 12px)
+            - font-weight: bold
+            - line-height: 1
+        style:
+          top: 23%
+          left: 10%
+      - type: custom:button-card
+        entity: media_player.samsung_7_series_60_ue60ks7080
+        icon: mdi:television
+        show_name: false
+        show_state: false
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(0,255,255,0.35), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-sizing: border-box
+            - overflow: visible
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 clamp(8px, 2vw, 22px) cyan';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid cyan';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+          icon:
+            - width: clamp(20px, 3.4vw, 34px)
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? 'cyan'
+                    : 'gray';
+                ]]]
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 40px !important;
+                height: 40px !important;
+                padding: 2px !important;
+              }
+
+              #icon {
+                width: 22px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 34px !important;
+                height: 34px !important;
+                padding: 2px !important;
+              }
+
+              #icon {
+                width: 18px !important;
+              }
+            }
+        style:
+          top: 65%
+          left: 50%
+      - type: custom:button-card
+        entity: media_player.chromecast5409
+        icon: mdi:television
+        show_name: false
+        show_state: false
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        styles:
+          card:
+            - background: |
+                [[[
+                  const active = !['off', 'unavailable', 'unknown'].includes(entity.state);
+
+                  if (active) {
+                    return 'radial-gradient(circle, rgba(0,255,255,0.35), rgba(0,0,0,0.65))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border-radius: 50%
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - padding: clamp(2px, 0.7vw, 4px)
+            - box-shadow: |
+                [[[
+                  const active = !['off', 'unavailable', 'unknown'].includes(entity.state);
+
+                  if (active) {
+                    return '0 0 clamp(8px, 2vw, 22px) cyan';
+                  }
+
+                  return '0 0 clamp(4px, 1vw, 8px) rgba(0,0,0,0.6)';
+                ]]]
+            - border: |
+                [[[
+                  const active = !['off', 'unavailable', 'unknown'].includes(entity.state);
+
+                  if (active) {
+                    return '2px solid cyan';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+          icon:
+            - width: clamp(20px, 3.4vw, 34px)
+            - color: |
+                [[[
+                  const active = !['off', 'unavailable', 'unknown'].includes(entity.state);
+                  return active ? 'cyan' : 'gray';
+                ]]]
+        style:
+          top: 47%
+          left: 23%
+      - type: custom:button-card
+        entity: switch.tesla_switch
+        show_icon: false
+        show_name: false
+        show_state: true
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        state_display: |
+          [[[
+            const p = states['sensor.anma_charger_power_2'];
+
+            if (p && !['unknown', 'unavailable'].includes(p.state)) {
+              const value = Number(p.state);
+
+              if (!isNaN(value)) {
+                return value.toFixed(1) + ' kW';
+              }
+            }
+
+            return entity.state === 'on' ? '0.0 kW' : '';
+          ]]]
+        styles:
+          card:
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - border-radius: 50%
+            - padding: 0
+            - box-sizing: border-box
+            - overflow: visible
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - background: |
+                [[[
+                  if (entity.state === 'on') {
+                    return 'radial-gradient(circle, rgba(0,255,120,0.34), rgba(0,0,0,0.72))';
+                  }
+
+                  return 'rgba(0,0,0,0.45)';
+                ]]]
+            - border: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '2px solid rgba(0,255,120,0.90)';
+                  }
+
+                  return '1px solid rgba(255,255,255,0.15)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return `
+                      0 0 6px rgba(0,255,120,0.70),
+                      0 0 14px rgba(0,255,120,0.50),
+                      0 0 26px rgba(0,255,120,0.28)
+                    `;
+                  }
+
+                  return '0 0 7px rgba(0,0,0,0.60)';
+                ]]]
+          grid:
+            - grid-template-areas: "\"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: 1fr
+            - align-items: center
+            - justify-items: center
+          state:
+            - color: |
+                [[[
+                  return entity.state === 'on'
+                    ? '#79ffb2'
+                    : 'transparent';
+                ]]]
+            - font-size: clamp(7px, 1.1vw, 10px)
+            - font-weight: 900
+            - line-height: 1
+            - white-space: nowrap
+            - text-align: center
+            - text-shadow: |
+                [[[
+                  if (entity.state === 'on') {
+                    return '0 0 7px rgba(0,255,120,0.95)';
+                  }
+
+                  return 'none';
+                ]]]
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 40px !important;
+                height: 40px !important;
+              }
+
+              #state {
+                font-size: 8px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 34px !important;
+                height: 34px !important;
+              }
+
+              #state {
+                font-size: 7px !important;
+              }
+            }
+        style:
+          top: 95%
+          left: 29%
+          transform: translate(-50%, -50%)
+          z-index: 35
+      - type: custom:button-card
+        entity: sensor.anma_battery_level
+        show_icon: false
+        show_name: false
+        show_state: true
+        tap_action:
+          action: more-info
+        state_display: |
+          [[[
+            if (
+              entity.state &&
+              !['unknown', 'unavailable'].includes(entity.state)
+            ) {
+              const value = Number(entity.state);
+
+              if (!isNaN(value)) {
+                return Math.round(value) + '%';
+              }
+            }
+
+            return '--%';
+          ]]]
+        styles:
+          card:
+            - width: clamp(42px, 6vw, 60px)
+            - height: clamp(42px, 6vw, 60px)
+            - border-radius: 50%
+            - padding: 0
+            - box-sizing: border-box
+            - overflow: visible
+            - display: flex
+            - align-items: center
+            - justify-content: center
+            - background: |
+                [[[
+                  const value = Number(entity.state);
+
+                  if (isNaN(value)) {
+                    return 'rgba(0,0,0,0.45)';
+                  }
+
+                  return 'radial-gradient(circle, rgba(0,229,255,0.28), rgba(0,0,0,0.72))';
+                ]]]
+            - border: |
+                [[[
+                  const value = Number(entity.state);
+
+                  if (isNaN(value)) {
+                    return '1px solid rgba(255,255,255,0.15)';
+                  }
+
+                  return '1px solid rgba(0,229,255,0.85)';
+                ]]]
+            - box-shadow: |
+                [[[
+                  const value = Number(entity.state);
+
+                  if (isNaN(value)) {
+                    return '0 0 7px rgba(0,0,0,0.60)';
+                  }
+
+                  return `
+                    0 0 6px rgba(0,229,255,0.55),
+                    0 0 14px rgba(0,229,255,0.38),
+                    0 0 24px rgba(0,229,255,0.22)
+                  `;
+                ]]]
+          grid:
+            - grid-template-areas: "\"s\""
+            - grid-template-columns: 1fr
+            - grid-template-rows: 1fr
+            - align-items: center
+            - justify-items: center
+          state:
+            - color: "#9cf7ff"
+            - font-size: clamp(10px, 1.5vw, 14px)
+            - font-weight: 900
+            - line-height: 1
+            - white-space: nowrap
+            - text-align: center
+            - text-shadow: 0 0 7px rgba(0,229,255,0.95)
+        card_mod:
+          style: |
+            @media (max-width: 1100px) {
+              ha-card {
+                width: 40px !important;
+                height: 40px !important;
+              }
+
+              #state {
+                font-size: 11px !important;
+              }
+            }
+
+            @media (max-width: 700px) {
+              ha-card {
+                width: 34px !important;
+                height: 34px !important;
+              }
+
+              #state {
+                font-size: 9px !important;
+              }
+            }
+        style:
+          top: 89%
+          left: 20%
+          transform: translate(-50%, -50%)
+          z-index: 35
