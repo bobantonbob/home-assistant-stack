@@ -220,6 +220,18 @@
 
 ---
 
+
+### Заняття 16 — Marquise in Home Assistant ⚡ Levels, STOP, FULL and animation
+
+![Lesson 16 Preview](./preview3D/3D_Dashboard_16.png)
+
+Додаємо анімацію стрінгів і мікроінверторів на даху. Через YAML-код показуємо SVG-потоки тільки тоді, коли є день, а мікроінвертори додатково показуються тільки коли вони увімкнені.
+
+[📁 Перейти на GitHub](./lesson-16-awning-levels-stop-full-animation)  
+[▶ Дивитися відео](https://youtu.be/_qcpf9xiOD4)
+
+---
+
 ## Поточна структура репозиторію
 
 ```text
@@ -241,6 +253,7 @@ home-assistant-3d-dashboard-course/
 │   ├── 3D_Dashboard_13.png
 │   └── 3D_Dashboard_14.png
 │   └── 3D_Dashboard_15.png
+│   └── 3D_Dashboard_16.png
 ├── lesson-01-basic-floorplan/
 ├── lesson-02-power-sensor-card-led-strip-button/
 ├── lesson-03_led_on_off_light_dimmer_button/
@@ -256,6 +269,7 @@ home-assistant-3d-dashboard-course/
 ├── lesson-13-solcast-7-day-forecast-cards/
 ├── lesson-14-roof-strings-microinverters-animation/
 ├── lesson-15-air-conditioner-climate-card/
+├── lesson-16-awning-levels-stop-full-animation/
 ├── README.md
 └── dashboard_full.png
 ```
