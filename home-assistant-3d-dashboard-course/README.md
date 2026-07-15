@@ -208,6 +208,18 @@
 
 ---
 
+
+### Заняття 15 — Air conditioner card in Home Assistant
+
+![Lesson 15 Preview](./preview3D/3D_Dashboard_15.png)
+
+Додаємо анімацію стрінгів і мікроінверторів на даху. Через YAML-код показуємо SVG-потоки тільки тоді, коли є день, а мікроінвертори додатково показуються тільки коли вони увімкнені.
+
+[📁 Перейти на GitHub](./lesson-15-air-conditioner-climate-card)  
+[▶ Дивитися відео](https://youtu.be/dDJip0TmadI)
+
+---
+
 ## Поточна структура репозиторію
 
 ```text
@@ -242,6 +254,7 @@ home-assistant-3d-dashboard-course/
 ├── lesson-12-sun-progress-template-and-card/
 ├── lesson-13-solcast-7-day-forecast-cards/
 ├── lesson-14-roof-strings-microinverters-animation/
+├── lesson-15-air-conditioner-climate-card/
 ├── README.md
 └── dashboard_full.png
 ```
