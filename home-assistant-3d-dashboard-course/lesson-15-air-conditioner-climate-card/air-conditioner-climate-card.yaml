@@ -1,0 +1,197 @@
+  - type: custom:button-card
+    entity: climate.konditsioner_kukhnia
+    icon: mdi:air-conditioner
+    show_icon: false
+    show_name: false
+    show_state: true
+    tap_action:
+      action: toggle
+    hold_action:
+      action: more-info
+    double_tap_action:
+      action: more-info
+    state_display: |
+      [[[
+        if (
+          entity.state === 'off' ||
+          ['unknown', 'unavailable'].includes(entity.state)
+        ) {
+          return '';
+        }
+
+        const t = entity.attributes.temperature;
+        if (t === undefined || t === null) return '';
+        return Math.round(Number(t)) + '°';
+      ]]]
+    extra_styles: |
+      @keyframes ac_auto_pulse {
+        0% {
+          transform: scale(1);
+          box-shadow:
+            0 0 4px rgba(255,255,255,0.10),
+            0 0 10px rgba(255,255,255,0.08),
+            0 0 18px rgba(255,255,255,0.06),
+            0 0 28px rgba(255,255,255,0.04);
+        }
+        50% {
+          transform: scale(1.03);
+          box-shadow:
+            0 0 8px rgba(255,255,255,0.35),
+            0 0 18px rgba(255,255,255,0.28),
+            0 0 32px rgba(255,255,255,0.22),
+            0 0 48px rgba(255,255,255,0.14);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow:
+            0 0 4px rgba(255,255,255,0.10),
+            0 0 10px rgba(255,255,255,0.08),
+            0 0 18px rgba(255,255,255,0.06),
+            0 0 28px rgba(255,255,255,0.04);
+        }
+      }
+    styles:
+      card:
+        - width: clamp(44px, 4.8vw, 60px)
+        - height: clamp(44px, 4.8vw, 60px)
+        - border-radius: 50%
+        - padding: 0
+        - box-sizing: border-box
+        - overflow: visible
+        - display: flex
+        - align-items: center
+        - justify-content: center
+        - background: |
+            [[[
+              const mode = entity.state;
+              if (mode === 'off') return 'rgba(58,58,58,0.88)';
+              if (mode === 'cool') return 'rgba(33,150,243,0.18)';
+              if (mode === 'heat') return 'rgba(255,152,0,0.18)';
+              if (mode === 'dry') return 'rgba(0,188,212,0.18)';
+              if (mode === 'fan_only') return 'rgba(176,190,197,0.18)';
+              if (mode === 'auto') return 'rgba(156,39,176,0.18)';
+              return 'rgba(90,90,90,0.85)';
+            ]]]
+        - border: |
+            [[[
+              const mode = entity.state;
+              if (mode === 'off') return '1px solid rgba(255,255,255,0.14)';
+              if (mode === 'cool') return '1px solid rgba(100,181,246,0.95)';
+              if (mode === 'heat') return '1px solid rgba(255,183,77,0.95)';
+              if (mode === 'dry') return '1px solid rgba(77,208,225,0.95)';
+              if (mode === 'fan_only') return '1px solid rgba(176,190,197,0.95)';
+              if (mode === 'auto') return '1px solid rgba(186,104,200,0.95)';
+              return '1px solid rgba(255,255,255,0.16)';
+            ]]]
+        - box-shadow: |
+            [[[
+              const mode = entity.state;
+              const rawFan = (entity.attributes.fan_mode || '').toString().toLowerCase();
+
+              let color = '255,255,255';
+              if (mode === 'cool') color = '100,181,246';
+              else if (mode === 'heat') color = '255,183,77';
+              else if (mode === 'dry') color = '77,208,225';
+              else if (mode === 'fan_only') color = '176,190,197';
+              else if (mode === 'auto') color = '186,104,200';
+
+              if (mode === 'off') {
+                return '0 0 6px rgba(0,0,0,0.45)';
+              }
+
+              if (rawFan === 'low') {
+                return `
+                  0 0 4px rgba(${color},0.35),
+                  0 0 8px rgba(${color},0.22),
+                  0 0 14px rgba(${color},0.14),
+                  0 0 22px rgba(${color},0.08)
+                `;
+              }
+
+              if (rawFan === 'medium' || rawFan === 'mid') {
+                return `
+                  0 0 5px rgba(${color},0.48),
+                  0 0 12px rgba(${color},0.34),
+                  0 0 20px rgba(${color},0.22),
+                  0 0 30px rgba(${color},0.12)
+                `;
+              }
+
+              if (rawFan === 'high') {
+                return `
+                  0 0 7px rgba(${color},0.70),
+                  0 0 16px rgba(${color},0.52),
+                  0 0 28px rgba(${color},0.34),
+                  0 0 42px rgba(${color},0.18)
+                `;
+              }
+
+              return `
+                0 0 6px rgba(${color},0.55),
+                0 0 14px rgba(${color},0.38),
+                0 0 24px rgba(${color},0.24),
+                0 0 36px rgba(${color},0.14)
+              `;
+            ]]]
+        - animation: |
+            [[[
+              const rawFan = (entity.attributes.fan_mode || '').toString().toLowerCase();
+              if (entity.state !== 'off' && (rawFan === 'auto' || entity.state === 'auto')) {
+                return 'ac_auto_pulse 2.2s ease-in-out infinite';
+              }
+              return 'none';
+            ]]]
+      grid:
+        - grid-template-areas: "\"s\""
+        - grid-template-columns: 1fr
+        - grid-template-rows: 1fr
+        - align-items: center
+        - justify-items: center
+      state:
+        - color: |
+            [[[
+              const mode = entity.state;
+              if (mode === 'off') return 'rgba(180,180,180,0.0)';
+              if (mode === 'cool') return '#90caf9';
+              if (mode === 'heat') return '#ffcc80';
+              if (mode === 'dry') return '#80deea';
+              if (mode === 'fan_only') return '#cfd8dc';
+              if (mode === 'auto') return '#e1bee7';
+              return '#ffffff';
+            ]]]
+        - font-size: clamp(11px, 1.15vw, 15px)
+        - font-weight: 900
+        - line-height: 1
+        - white-space: nowrap
+        - text-align: center
+        - text-shadow: |
+            [[[
+              const mode = entity.state;
+              if (mode === 'off') return 'none';
+              if (mode === 'cool') return '0 0 8px rgba(100,181,246,0.85)';
+              if (mode === 'heat') return '0 0 8px rgba(255,183,77,0.85)';
+              if (mode === 'dry') return '0 0 8px rgba(77,208,225,0.85)';
+              if (mode === 'fan_only') return '0 0 8px rgba(176,190,197,0.75)';
+              if (mode === 'auto') return '0 0 8px rgba(186,104,200,0.85)';
+              return 'none';
+            ]]]
+    card_mod:
+      style: |
+        @media (max-width: 1100px) {
+          ha-card {
+            width: 40px !important;
+            height: 40px !important;
+          }
+        }
+
+        @media (max-width: 700px) {
+          ha-card {
+            width: 34px !important;
+            height: 34px !important;
+          }
+        }
+    style:
+      top: 75%
+      left: 50%
+      transform: translate(-50%, -50%)
+      z-index: 35
