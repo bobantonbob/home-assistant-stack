@@ -240,6 +240,7 @@ home-assistant-3d-dashboard-course/
 │   ├── 3D_Dashboard_12.png
 │   ├── 3D_Dashboard_13.png
 │   └── 3D_Dashboard_14.png
+│   └── 3D_Dashboard_15.png
 ├── lesson-01-basic-floorplan/
 ├── lesson-02-power-sensor-card-led-strip-button/
 ├── lesson-03_led_on_off_light_dimmer_button/
